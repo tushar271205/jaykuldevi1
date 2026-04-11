@@ -71,7 +71,7 @@ export default function HomePage() {
           getProducts({ isTopPick: true, limit: 8 }),
           getProducts({ category: 'boys', limit: 6, sort: 'newest' }),
           getProducts({ category: 'girls', limit: 6, sort: 'newest' }),
-          getProducts({ sort: 'newest', limit: 8 }),
+          getProducts({ sort: 'newest', limit: 6 }),
         ]);
         setTopPicks(topRes.data.products || []);
         setBoysProducts(boysRes.data.products || []);
@@ -310,7 +310,7 @@ export default function HomePage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
             {loading
-              ? renderSkeletons(8)
+              ? renderSkeletons(6)
               : newArrivals.length > 0
                 ? newArrivals.map((p) => <ProductCard key={p._id} product={p} />)
                 : <div style={{ gridColumn: '1/-1', padding: '40px', textAlign: 'center', color: 'var(--gray-400)' }}>
