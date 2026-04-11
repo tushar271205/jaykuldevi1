@@ -73,6 +73,19 @@ app.use('/api/coupons', require('./routes/couponRoutes'));
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'OK', service: 'Jay Kuldevi API', timestamp: new Date().toISOString() }));
 
+// Temporary diagnostic endpoint — check env vars (no secrets exposed)
+app.get('/health/env-check', (req, res) => res.json({
+  EMAIL_USER: process.env.EMAIL_USER ? '✅ set' : '❌ MISSING',
+  EMAIL_PASS: process.env.EMAIL_PASS ? '✅ set' : '❌ MISSING',
+  EMAIL_HOST: process.env.EMAIL_HOST ? '✅ set' : '❌ MISSING',
+  EMAIL_PORT: process.env.EMAIL_PORT ? '✅ set' : '❌ MISSING',
+  EMAIL_FROM: process.env.EMAIL_FROM ? '✅ set' : '❌ MISSING',
+  NODE_ENV: process.env.NODE_ENV || 'NOT SET',
+  MONGODB_URI: process.env.MONGODB_URI ? '✅ set' : '❌ MISSING',
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ? '✅ set' : '❌ MISSING',
+  FRONTEND_URL: process.env.FRONTEND_URL || 'NOT SET',
+}));
+
 // Serve static files from frontend/dist in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
