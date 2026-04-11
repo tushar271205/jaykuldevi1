@@ -1,47 +1,47 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Log email config status on startup (no secrets)
-console.log('[Email] Config check — EMAIL_USER:', process.env.EMAIL_USER ? '✅ set' : '❌ MISSING');
-console.log('[Email] Config check — EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ set' : '❌ MISSING');
+// Initialize Resend with the provided API key
+const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_3576JKfs_3TBE1QEwpvcjM7Av47RyPox7';
+const resend = new Resend(RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // use SSL (works better on cloud platforms like Render)
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 10000, // 10s timeout
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
-});
-
-// Verify transporter on startup
-transporter.verify()
-  .then(() => console.log('[Email] ✅ SMTP connection verified successfully'))
-  .catch((err) => console.error('[Email] ❌ SMTP connection failed:', err.message));
-
+// Log email config status on startup
+console.log('[Email] Config check — RESEND_API_KEY:', RESEND_API_KEY ? '✅ set' : '❌ MISSING');
 
 const sendEmail = async ({ to, subject, html, attachments }) => {
-  // Guard: fail fast with a clear message if email is not configured
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    const errMsg = 'Email service not configured. EMAIL_USER and EMAIL_PASS environment variables are required.';
+  if (!RESEND_API_KEY) {
+    const errMsg = 'Email service not configured. RESEND_API_KEY is required.';
     console.error('[Email] ' + errMsg);
     throw new Error(errMsg);
   }
 
   try {
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || 'Jay Kuldevi <noreply@jaykuldevi.com>',
+    // Format attachments for Resend
+    const resendAttachments = attachments ? attachments.map(att => ({
+      filename: att.filename,
+      content: att.content
+    })) : undefined;
+
+    // Resend requires the 'From' domain to match a verified domain.
+    // Since you are likely testing, we use Resend's default onboarding email.
+    // If you verify your own domain (e.g., jaykuldevi.com) in Resend, you can change this back to your domain email.
+    const fromEmail = 'Jay Kuldevi <onboarding@resend.dev>';
+
+    const { data, error } = await resend.emails.send({
+      from: fromEmail,
       to,
       subject,
       html,
-      attachments,
+      attachments: resendAttachments,
     });
-    console.log('[Email] ✅ Sent to:', to, '| MessageId:', info.messageId);
+
+    if (error) {
+      console.error('[Email] ❌ Send failed to:', to, '| Resend API Error:', error.message);
+      throw new Error(error.message);
+    }
+
+    console.log('[Email] ✅ Sent to:', to, '| MessageId:', data.id);
   } catch (error) {
-    console.error('[Email] ❌ Send failed to:', to, '| Error:', error.message);
+    console.error('[Email] ❌ Send failed to:', to, '| System Error:', error.message);
     throw error;
   }
 };
