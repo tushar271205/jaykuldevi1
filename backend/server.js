@@ -10,6 +10,9 @@ require('./utils/cronJobs');
 
 const app = express();
 
+// Trust first proxy (Render, Railway, etc.) — required for express-rate-limit
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
