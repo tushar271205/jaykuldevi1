@@ -30,10 +30,12 @@ app.use(helmet({
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       "img-src": ["'self'", "data:", "blob:", "*", "https:", "http:"],
-      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com"],
+      "script-src-elem": ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
       "style-src": ["'self'", "'unsafe-inline'", "https:", "http:"],
       "font-src": ["'self'", "data:", "https:", "http:"],
       "connect-src": ["'self'", "https:", "http:"],
+      "frame-src": ["'self'", "https://js.stripe.com"],
     },
   },
   crossOriginResourcePolicy: { policy: "cross-origin" },
