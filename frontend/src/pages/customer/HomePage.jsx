@@ -308,7 +308,7 @@ export default function HomePage() {
             <h2 className="section-title"><IconSparkles size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> New Arrivals</h2>
             <Link to="/products?sort=newest" className="section-link">View All →</Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
             {loading
               ? renderSkeletons(8)
               : newArrivals.length > 0
@@ -448,7 +448,7 @@ export default function HomePage() {
             <h2 className="section-title"><IconSparkles size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Top Picks</h2>
             <Link to="/products?isTopPick=true" className="section-link">View All →</Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
             {loading
               ? renderSkeletons(8)
               : topPicks.length > 0
@@ -469,7 +469,7 @@ export default function HomePage() {
               <h2 className="section-title"><IconBoy size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Boys Collection</h2>
               <Link to="/boys" className="section-link">Shop All Boys →</Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
               {boysProducts.map((p) => <ProductCard key={p._id} product={p} />)}
             </div>
           </div>
@@ -484,7 +484,7 @@ export default function HomePage() {
               <h2 className="section-title"><IconGirl size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Girls Collection</h2>
               <Link to="/girls" className="section-link">Shop All Girls →</Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
               {girlsProducts.map((p) => <ProductCard key={p._id} product={p} />)}
             </div>
           </div>
