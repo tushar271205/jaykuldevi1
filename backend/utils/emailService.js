@@ -1,5 +1,9 @@
 const nodemailer = require('nodemailer');
 
+// Log email config status on startup (no secrets)
+console.log('[Email] Config check — EMAIL_USER:', process.env.EMAIL_USER ? '✅ set' : '❌ MISSING');
+console.log('[Email] Config check — EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ set' : '❌ MISSING');
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -10,6 +14,13 @@ const transporter = nodemailer.createTransport({
 
 
 const sendEmail = async ({ to, subject, html, attachments }) => {
+  // Guard: fail fast with a clear message if email is not configured
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    const errMsg = 'Email service not configured. EMAIL_USER and EMAIL_PASS environment variables are required.';
+    console.error('[Email] ' + errMsg);
+    throw new Error(errMsg);
+  }
+
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM || 'Jay Kuldevi <noreply@jaykuldevi.com>',

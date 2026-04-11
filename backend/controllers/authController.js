@@ -37,6 +37,11 @@ exports.sendOTP = async (req, res, next) => {
 
     res.json({ success: true, message: `OTP sent to ${email}. Valid for 10 minutes.` });
   } catch (error) {
+    console.error('[SendOTP] Error:', error.message);
+    // Return a user-friendly error instead of a generic 500
+    if (error.message.includes('Email service not configured') || error.message.includes('EAUTH') || error.message.includes('Invalid login')) {
+      return res.status(503).json({ success: false, message: 'Email service is temporarily unavailable. Please try again later or contact support.' });
+    }
     next(error);
   }
 };
