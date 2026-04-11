@@ -5,12 +5,22 @@ console.log('[Email] Config check — EMAIL_USER:', process.env.EMAIL_USER ? '�
 console.log('[Email] Config check — EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ set' : '❌ MISSING');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // use SSL (works better on cloud platforms like Render)
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 10000, // 10s timeout
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
 });
+
+// Verify transporter on startup
+transporter.verify()
+  .then(() => console.log('[Email] ✅ SMTP connection verified successfully'))
+  .catch((err) => console.error('[Email] ❌ SMTP connection failed:', err.message));
 
 
 const sendEmail = async ({ to, subject, html, attachments }) => {
@@ -22,16 +32,17 @@ const sendEmail = async ({ to, subject, html, attachments }) => {
   }
 
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM || 'Jay Kuldevi <noreply@jaykuldevi.com>',
       to,
       subject,
       html,
       attachments,
     });
+    console.log('[Email] ✅ Sent to:', to, '| MessageId:', info.messageId);
   } catch (error) {
-    console.error('Email send failed:', error.message);
-    throw error; // Re-throw so the API handler knows it failed
+    console.error('[Email] ❌ Send failed to:', to, '| Error:', error.message);
+    throw error;
   }
 };
 
