@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { createRazorpayOrder, verifyPayment, placeCODOrder } from '../../api/orders';
+import { createStripePaymentIntent, confirmPayment, placeCODOrder } from '../../api/orders';
 import { applyCoupon } from '../../api/coupons';
 import toast from 'react-hot-toast';
+import StripeContainer from '../../components/payment/StripeContainer';
 import { IconCreditCard, IconMoney, IconPhone, IconParty } from '../../components/common/Icons';
 
 const PAYMENT_METHODS = [
-  { id: 'razorpay', label: 'Online Payment', sub: 'UPI, Debit/Credit Card, Net Banking', icon: <IconCreditCard size={18} /> },
+  { id: 'stripe', label: 'Online Payment', sub: 'Debit/Credit Card, Net Banking', icon: <IconCreditCard size={18} /> },
   { id: 'cod', label: 'Cash on Delivery', sub: 'Pay when you receive', icon: <IconMoney size={18} /> },
 ];
 
@@ -20,7 +21,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState(1); // 1: Address, 2: Coupon, 3: Payment
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  const [paymentMethod, setPaymentMethod] = useState('stripe');
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState('');
@@ -29,6 +30,8 @@ export default function CheckoutPage() {
     fullName: user?.name || '', mobile: user?.mobile || '',
     addressLine1: '', addressLine2: '', city: '', state: '', pincode: '',
   });
+
+  const [stripeIntent, setStripeIntent] = useState(null); // { clientSecret, orderId, amount }
 
   useEffect(() => {
     if (cartItems.length === 0) navigate('/');
@@ -52,7 +55,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleRazorpayPayment = async () => {
+  const handleStripePayment = async () => {
     if (!selectedAddress) { toast.error('Please select a delivery address'); return; }
     if (!selectedAddress.fullName || !selectedAddress.mobile || !selectedAddress.addressLine1 || !selectedAddress.city || !selectedAddress.state || !selectedAddress.pincode) {
       toast.error('Please complete all required fields in the delivery address.');
@@ -68,46 +71,16 @@ export default function CheckoutPage() {
         couponCode: couponApplied,
       };
 
-      const res = await createRazorpayOrder(payload);
-      const { razorpayOrderId, amount, keyId, orderId } = res.data;
-
-      const options = {
-        key: keyId,
-        amount,
-        currency: 'INR',
-        name: 'Jay Kuldevi',
-        description: 'Kids Clothing Purchase',
-        order_id: razorpayOrderId,
-        handler: async (response) => {
-          try {
-            await verifyPayment({
-              orderId,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            });
-            clearCart();
-            await refetchUser();
-            navigate(`/order-success/${orderId}`);
-          } catch (err) {
-            console.error('Payment verification error:', err);
-            toast.error(err.response?.data?.message || err.message || 'Payment verification failed. Contact support.');
-          }
-        },
-        prefill: { name: user?.name, email: user?.email, contact: user?.mobile },
-        theme: { color: '#1b4965' },
-        modal: { ondismiss: () => setLoading(false) },
-      };
-
-      if (window.Razorpay) {
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else {
-        toast.error('Razorpay not loaded. Please refresh.');
-      }
+      const res = await createStripePaymentIntent(payload);
+      setStripeIntent({
+        clientSecret: res.data.clientSecret,
+        orderId: res.data.orderId,
+        amount: finalAmount
+      });
     } catch (err) {
-      console.error('Razorpay creation error:', err);
-      toast.error(err.response?.data?.message || err.message || 'Failed to create order');
+      console.error('Stripe initialization error:', err);
+      toast.error(err.response?.data?.message || err.message || 'Failed to initialize payment');
+    } finally {
       setLoading(false);
     }
   };
@@ -140,7 +113,7 @@ export default function CheckoutPage() {
   };
 
   const handlePlaceOrder = () => {
-    if (paymentMethod === 'razorpay') handleRazorpayPayment();
+    if (paymentMethod === 'stripe') handleStripePayment();
     else handleCOD();
   };
 
@@ -148,10 +121,7 @@ export default function CheckoutPage() {
     <div className="container" style={{ paddingTop: 24, paddingBottom: 48 }}>
       <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24 }}>Checkout</h1>
 
-      {/* Razorpay Script */}
-      <script src="https://checkout.razorpay.com/v1/checkout.js" async />
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
+      <div className="resp-grid-sidebar" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
         {/* LEFT — Steps */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
@@ -207,7 +177,7 @@ export default function CheckoutPage() {
 
                 {/* Quick address form */}
                 {(showAddressForm || !user?.addresses || user.addresses.length === 0) && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                  <div className="resp-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
                     {[
                       { key: 'fullName', label: 'Full Name', col: 2 },
                       { key: 'mobile', label: 'Mobile', type: 'tel' },
@@ -426,6 +396,20 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {stripeIntent && (
+        <StripeContainer 
+          clientSecret={stripeIntent.clientSecret}
+          orderId={stripeIntent.orderId}
+          amount={stripeIntent.amount}
+          onCancel={() => setStripeIntent(null)}
+          onSuccess={async () => {
+            clearCart();
+            await refetchUser();
+            navigate(`/order-success/${stripeIntent.orderId}`);
+          }}
+        />
+      )}
     </div>
   );
 }

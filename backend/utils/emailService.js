@@ -58,7 +58,7 @@ const emailTemplates = {
           <h2 style="color:#333">Hey ${name}! Welcome aboard! 🎉</h2>
           <p style="color:#555;line-height:1.6">We're thrilled to have you at Jay Kuldevi — your one-stop destination for adorable kids' clothing!</p>
           <p style="color:#555;line-height:1.6">🛍️ Browse our latest collections for boys & girls<br>
-          💳 Easy payments with Razorpay (UPI, Card, & more)<br>
+          💳 Easy payments with Card, Net Banking & more<br>
           📦 Track your orders in real-time<br>
           🎁 Enjoy exclusive discounts just for you!</p>
           <div style="text-align:center;margin:32px 0">
@@ -156,7 +156,7 @@ const emailTemplates = {
           <div style="background:#f8f8f8;border-radius:12px;padding:20px;margin:20px 0">
             <p style="margin:0 0 8px"><strong>Order Number:</strong> #${order.orderNumber}</p>
             <p style="margin:0 0 8px"><strong>Refund Amount:</strong> ₹${order.finalAmount}</p>
-            <p style="margin:0"><strong>Razorpay Payment ID:</strong> ${order.razorpayPaymentId}</p>
+            <p style="margin:0"><strong>Payment Intent ID:</strong> ${order.stripePaymentIntentId}</p>
           </div>
           <p style="color:#555;font-size:14px">Please log in to the admin dashboard to review and approve this refund.</p>
           <div style="text-align:center;margin:32px 0">

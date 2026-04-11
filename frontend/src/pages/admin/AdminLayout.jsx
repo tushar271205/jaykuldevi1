@@ -1,6 +1,7 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { IconBarChart, IconShirt, IconPackage, IconDollar, IconTicket, IconUsers, IconHome, IconLogOut } from '../../components/common/Icons';
+import { IconBarChart, IconShirt, IconPackage, IconDollar, IconTicket, IconUsers, IconHome, IconLogOut, IconMenu2, IconX } from '../../components/common/Icons';
 
 const NAV_ITEMS = [
   { to: '/admin/dashboard', icon: <IconBarChart size={18} />, label: 'Dashboard' },
@@ -14,28 +15,86 @@ const NAV_ITEMS = [
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Auto-close sidebar on navigation (mobile)
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'var(--font-main)' }}>
-      {/* Sidebar */}
-      <aside style={{
-        width: 240,
-        background: '#1a1a2e',
+      {/* Mobile Header Toggle */}
+      <div className="admin-mobile-header" style={{
+        display: 'none',
         position: 'fixed',
-        top: 0, left: 0, bottom: 0,
-        display: 'flex', flexDirection: 'column',
-        zIndex: 200,
-        overflow: 'hidden',
+        top: 0, left: 0, right: 0,
+        height: 60,
+        background: '#1a1a2e',
+        color: 'white',
+        alignItems: 'center',
+        padding: '0 20px',
+        zIndex: 300,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
       }}>
+        <button 
+          onClick={() => setIsSidebarOpen(true)}
+          style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 8, marginLeft: -8 }}
+        >
+          <IconMenu2 size={24} />
+        </button>
+        <div style={{ flex: 1, textAlign: 'center', fontFamily: 'var(--font-brand)', fontSize: 18, letterSpacing: 1 }}>
+          JAY KULDEVI ADMIN
+        </div>
+      </div>
+
+      {/* Sidebar Overlay (Mobile) */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          className="admin-sidebar-overlay"
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 350,
+            backdropFilter: 'blur(2px)'
+          }}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside 
+        className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}
+        style={{
+          width: 240,
+          background: '#1a1a2e',
+          position: 'fixed',
+          top: 0, left: 0, bottom: 0,
+          display: 'flex', flexDirection: 'column',
+          zIndex: 400,
+          overflow: 'hidden',
+          transition: 'transform 0.3s ease'
+        }}
+      >
         {/* Brand */}
-        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <img src="/FullLogo.jpg" alt="Jay Kuldevi Logo" style={{ height: 32, width: 'auto', borderRadius: 4, objectFit: 'contain' }} />
-            <span style={{ fontFamily: 'var(--font-brand)', fontSize: 20, fontWeight: 600, color: 'var(--secondary)', letterSpacing: '1.5px', textTransform: 'uppercase', textShadow: '0.1px 0 0 var(--secondary)' }}>Jay Kuldevi</span>
+        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <img src="/FullLogo.jpg" alt="Jay Kuldevi Logo" style={{ height: 32, width: 'auto', borderRadius: 4, objectFit: 'contain' }} />
+              <span style={{ fontFamily: 'var(--font-brand)', fontSize: 20, fontWeight: 600, color: 'var(--secondary)', letterSpacing: '1.5px', textTransform: 'uppercase', textShadow: '0.1px 0 0 var(--secondary)' }}>Jay Kuldevi</span>
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Admin Panel
+            </div>
           </div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Admin Panel
-          </div>
+          <button 
+            className="admin-sidebar-close"
+            onClick={() => setIsSidebarOpen(false)}
+            style={{ display: 'none', background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
+          >
+            <IconX size={24} />
+          </button>
         </div>
 
         {/* Nav Items */}
@@ -102,9 +161,10 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main style={{ flex: 1, marginLeft: 240, padding: '24px', minHeight: '100vh', overflow: 'auto' }}>
+      <main className="admin-main" style={{ flex: 1, marginLeft: 240, padding: '24px', minHeight: '100vh', overflow: 'auto' }}>
         <Outlet />
       </main>
     </div>
   );
 }
+

@@ -455,37 +455,145 @@
   font-weight: 500;
 }
 
-/* Mobile Menu */
-.mobile-menu {
-  background: var(--white);
-  border-top: 1px solid var(--gray-100);
+/* Mobile Sidebar / Drawer Overlay */
+.drawer-overlay.show-mobile {
   position: fixed;
-  top: calc(var(--topbar-height) + var(--navbar-height));
-  left: 0;
-  right: 0;
-  z-index: calc(var(--z-sticky) - 1);
-  animation: slideUp 0.2s ease;
-  box-shadow: var(--shadow-lg);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: calc(var(--z-sticky) + 99);
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.mobile-menu-inner {
-  padding: var(--space-3) 0;
-}
-
-.mobile-nav-link {
+.drawer-overlay.show-mobile.open {
   display: block;
-  padding: var(--space-3) var(--space-6);
+  opacity: 1;
+}
+
+/* Mobile Sidebar */
+.mobile-sidebar.show-mobile {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 85%;
+  max-width: 320px;
+  height: 100vh;
+  background: var(--white);
+  z-index: calc(var(--z-sticky) + 100);
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.mobile-sidebar.show-mobile.open {
+  left: 0;
+}
+
+.mobile-sidebar-header {
+  padding: 16px;
+  border-bottom: 4px solid var(--gray-50);
+}
+
+.close-sidebar-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.sidebar-brand {
+  font-family: var(--font-brand);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 1px;
+}
+
+.sidebar-user {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
   font-size: 14px;
+}
+
+.mobile-sidebar-body {
+  padding: 8px 0;
+  flex: 1;
+}
+
+.sidebar-acc {
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.sidebar-acc-title {
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-800);
+  display: flex;
+  justify-content: space-between;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-acc-content {
+  background: var(--gray-50);
+  padding: 8px 0;
+}
+
+.sidebar-sublink {
+  display: block;
+  padding: 10px 16px 10px 32px;
+  font-size: 13px;
+  color: var(--gray-600);
+  text-decoration: none;
+}
+
+.sidebar-link {
+  display: block;
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-800);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--gray-100);
+  text-decoration: none;
+}
+
+.sidebar-link-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--gray-700);
   text-decoration: none;
-  border-bottom: 1px solid var(--gray-50);
-  transition: background var(--transition-fast);
 }
 
-.mobile-nav-link:hover {
-  background: var(--primary-50);
-  color: var(--primary);
+.sidebar-divider {
+  height: 8px;
+  background: var(--gray-50);
+  margin: 8px 0;
 }
 
 .logout-mobile {
@@ -496,4 +604,65 @@
   text-align: left;
   width: 100%;
   font-family: inherit;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 60px;
+    /* Fixed height for mobile */
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-inner {
+    flex-wrap: nowrap;
+    justify-content: space-between !important;
+    height: 50px;
+    padding: 0 8px !important;
+    /* Slightly tighter padding to maximize width */
+    width: 100% !important;
+  }
+
+  .brand {
+    margin-right: auto !important;
+    /* This pushes nav-actions to the right */
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-size: 17px !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap;
+  }
+
+  .search-wrap {
+    display: none !important;
+  }
+
+  .nav-actions {
+    margin-left: auto;
+    /* Double insurance to push right */
+    display: flex;
+    align-items: center;
+    gap: 2px !important;
+    /* Tighten gap between 4 icons */
+    flex-shrink: 0;
+  }
+
+  .nav-icon-btn {
+    min-width: 32px;
+    padding: 6px 4px !important;
+  }
+
+  .nav-icon-label {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-name {
+    font-size: 16px !important;
+    letter-spacing: 1px !important;
+  }
 }

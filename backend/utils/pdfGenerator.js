@@ -36,7 +36,7 @@ const generateBillPDF = (order, user) => {
     // Order Details
     doc.fontSize(10).fillColor('#333333')
       .text(`Order #: ${order.orderNumber}`, 350, 162)
-      .text(`Payment: ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online (Razorpay)'}`, 350, 177)
+      .text(`Payment: ${order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}`, 350, 177)
       .text(`Status: ${order.status.replace(/_/g, ' ').toUpperCase()}`, 350, 192);
 
     // Table Header

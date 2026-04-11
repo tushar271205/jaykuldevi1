@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { getSearchSuggestions } from '../../api/products';
-import { IconPackage, IconEdit, IconHeart, IconSettings, IconLogOut, IconShirt } from './Icons';
+import { IconPackage, IconEdit, IconHeart, IconSettings, IconLogOut, IconShirt, IconSearch } from './Icons';
 import './Navbar.css';
 
 const BOYS_SUBMENU = [
@@ -113,11 +113,12 @@ export default function Navbar() {
       {/* Main Navbar */}
       <header className={`navbar${isScrolled ? ' scrolled' : ''}`}>
         <div className="navbar-inner container">
+
+
           {/* Logo */}
           <Link to="/" className="brand">
-            <span className="brand-logo2"><img src="/FullLogo.jpg" /></span>
+            <span className="brand-logo2 hide-mobile"><img src="/FullLogo.jpg" /></span>
             <span className="brand-name">Jay Kuldevi</span>
-
           </Link>
 
           {/* Nav Links */}
@@ -239,6 +240,11 @@ export default function Navbar() {
 
           {/* Action Icons */}
           <div className="nav-actions">
+            {/* Search (Mobile Only) */}
+            <Link to="/products" className="nav-icon-btn show-mobile" title="Search">
+              <IconSearch size={21} />
+            </Link>
+
             {/* Wishlist */}
             <Link to="/wishlist" className="nav-icon-btn" title="Wishlist">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
@@ -322,45 +328,9 @@ export default function Navbar() {
               {cartCount > 0 && <span className="nav-badge cart-badge">{cartCount}</span>}
               <span className="nav-icon-label hide-mobile">Bag</span>
             </button>
-
-            {/* Mobile Menu */}
-            <button
-              className="nav-icon-btn show-mobile"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22">
-                {mobileMenuOpen
-                  ? <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
-                  : <><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></>
-                }
-              </svg>
-            </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="mobile-menu">
-            <div className="mobile-menu-inner">
-              <Link to="/boys" className="mobile-nav-link">Boys Collection</Link>
-              <Link to="/girls" className="mobile-nav-link">Girls Collection</Link>
-              <Link to="/products" className="mobile-nav-link">All Products</Link>
-              {isAuthenticated ? (
-                <>
-                  <Link to="/account/orders" className="mobile-nav-link">My Orders</Link>
-                  <Link to="/account/profile" className="mobile-nav-link">Profile</Link>
-                  {isAdmin && <Link to="/admin/dashboard" className="mobile-nav-link">Admin</Link>}
-                  <button className="mobile-nav-link logout-mobile" onClick={logout}>Logout</button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login" className="mobile-nav-link">Login</Link>
-                  <Link to="/register" className="mobile-nav-link">Register</Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
       </header>
     </>
   );

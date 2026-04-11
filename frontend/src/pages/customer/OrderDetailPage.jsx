@@ -140,7 +140,7 @@ export default function OrderDetailPage() {
             Placed on {new Date(order.createdAt).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <span className={`status-badge status-${order.status}`}>
             {STATUS_ICONS[order.status]} {STATUS_LABELS[order.status] || order.status}
           </span>
@@ -176,7 +176,7 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
+      <div className="resp-grid-sidebar" style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24, alignItems: 'start' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Order Tracking */}
           {!isCancelled && (

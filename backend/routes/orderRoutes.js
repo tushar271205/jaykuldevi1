@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { createRazorpayOrder, verifyPayment, placeCODOrder, getMyOrders, getOrderById, downloadBill, getAllOrders, updateOrderStatus, cancelOrder, approveRefund, requestReplacement } = require('../controllers/orderController');
+const { createStripePaymentIntent, confirmPayment, placeCODOrder, getMyOrders, getOrderById, downloadBill, getAllOrders, updateOrderStatus, cancelOrder, approveRefund, requestReplacement } = require('../controllers/orderController');
 const { protect, adminOnly } = require('../middleware/auth');
 
 // User routes
-router.post('/create-razorpay-order', protect, createRazorpayOrder);
-router.post('/verify-payment', protect, verifyPayment);
+router.post('/create-stripe-payment-intent', protect, createStripePaymentIntent);
+router.post('/confirm-payment', protect, confirmPayment);
 router.post('/cod', protect, placeCODOrder);
 router.get('/my-orders', protect, getMyOrders);
 router.get('/:id/bill', protect, downloadBill);

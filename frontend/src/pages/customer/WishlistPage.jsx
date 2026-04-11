@@ -19,16 +19,16 @@ export default function WishlistPage() {
       try {
         const res = await getMe();
         let list = res.data.user?.wishlist || [];
-        
+
         // Ensure sizes and colors are loaded for wishlist products
         if (list.length > 0 && (!list[0].sizes || !list[0].colors)) {
-           list = await Promise.all(list.map(async p => {
-               try { return (await getProduct(p._id)).data.product; } catch { return p; }
-           }));
+          list = await Promise.all(list.map(async p => {
+            try { return (await getProduct(p._id)).data.product; } catch { return p; }
+          }));
         }
 
         setProducts(list);
-      } catch {}
+      } catch { }
       finally { setLoading(false); }
     };
     fetchWishlist();
@@ -44,10 +44,10 @@ export default function WishlistPage() {
       </div>
 
       {loading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
-          {[1,2,3,4].map((i) => (
+        <div className="product-grid">
+          {[1, 2, 3, 4].map((i) => (
             <div key={i} style={{ borderRadius: 8, overflow: 'hidden' }}>
-              <div className="skeleton" style={{ paddingBottom: '125%' }} />
+              <div className="skeleton" style={{ paddingBottom: '100%' }} />
               <div style={{ padding: 12 }}>
                 <div className="skeleton" style={{ height: 10, width: '60%', marginBottom: 8 }} />
                 <div className="skeleton" style={{ height: 13, width: '90%' }} />
@@ -55,7 +55,7 @@ export default function WishlistPage() {
             </div>
           ))}
         </div>
-      ) : products.length === 0 ? (
+      ) : products.length === 0 ? ( 
         <div className="empty-state" style={{ minHeight: '50vh' }}>
           <div className="empty-state-icon"><IconHeart size={48} color="var(--gray-300)" /></div>
           <div className="empty-state-title">Your Wishlist is Empty</div>
@@ -63,7 +63,7 @@ export default function WishlistPage() {
           <Link to="/" className="btn btn-primary mt-4">Explore Collection →</Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+        <div className="product-grid">
           {products.map((product) => (
             <ProductCard key={typeof product === 'string' ? product : product._id} product={typeof product === 'string' ? { _id: product } : product} isWishlist={true} />
           ))}

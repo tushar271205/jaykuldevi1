@@ -447,28 +447,30 @@ export default function AdminProducts() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div className="admin-header-flex" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <h1 style={{ fontSize: 26, fontWeight: 800 }}>Products</h1>
         <button className="btn btn-primary" onClick={() => setShowProductModal(true)}>+ Add Product</button>
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-        <form className="search-form" style={{ backgroundColor: 'white', height: 40, flex: 1, minWidth: 260, maxWidth: 400 }} onSubmit={(e) => { e.preventDefault(); setPage(1); fetchProducts(); }}>
+      <div className="admin-header-flex" style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+        <form className="search-form" style={{ backgroundColor: 'white', height: 40, flex: 1, minWidth: '100%', maxWidth: 'none' }} onSubmit={(e) => { e.preventDefault(); setPage(1); fetchProducts(); }}>
           <IconSearch size={18} color="var(--gray-400)" />
           <input className="search-input" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
           {search && <button type="button" className="search-clear" onClick={() => { setSearch(''); }}>✕</button>}
         </form>
-        <select className="form-select" value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }} style={{ maxWidth: 160, height: 40 }}>
-          <option value="">All Categories</option>
-          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <button className="btn btn-outline btn-sm" style={{ height: 40 }} onClick={() => { setPage(1); fetchProducts(); }}>Search</button>
+        <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+          <select className="form-select" value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }} style={{ flex: 1, height: 40 }}>
+            <option value="">All Categories</option>
+            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <button className="btn btn-outline btn-sm" style={{ height: 40, flexShrink: 0 }} onClick={() => { setPage(1); fetchProducts(); }}>Search</button>
+        </div>
       </div>
 
       {/* Table */}
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--gray-100)', overflow: 'hidden' }}>
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ overflowX: 'auto' }}>
           <table className="data-table">
             <thead>
               <tr>

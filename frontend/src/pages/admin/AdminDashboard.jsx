@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
+      <div className="admin-header-flex" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
         <div>
           <h1 style={{ fontSize: 26, fontWeight: 800 }}>Dashboard</h1>
           <p style={{ color: 'var(--gray-400)', fontSize: 13, marginTop: 2 }}>
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="admin-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
         <StatCard icon={<IconDollar size={24} />} label="Total Revenue" value={`₹${(stats?.totalRevenue || 0).toLocaleString('en-IN')}`} sub="From paid orders" color="#10b981" />
         <StatCard icon={<IconPackage size={24} />} label="Total Orders" value={(stats?.totalOrders || 0).toLocaleString()} sub="Active orders" color="#3b82f6" />
         <StatCard icon={<IconUsers size={24} />} label="Customers" value={(stats?.totalUsers || 0).toLocaleString()} sub="Registered users" color="#8b5cf6" />
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
           <h2 style={{ fontSize: 16, fontWeight: 700 }}>Recent Orders</h2>
           <Link to="/admin/orders" style={{ fontSize: 13, fontWeight: 600, color: 'var(--primary)' }}>View All →</Link>
         </div>
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ overflowX: 'auto' }}>
           <table className="data-table">
             <thead>
               <tr>

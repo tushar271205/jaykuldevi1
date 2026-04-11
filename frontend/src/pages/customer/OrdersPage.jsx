@@ -85,7 +85,7 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <div key={order._id} className="card">
               {/* Order Header */}
-              <div style={{
+              <div className="resp-order-header" style={{
                 padding: '12px 20px',
                 background: 'var(--gray-50)',
                 borderBottom: '1px solid var(--gray-100)',
@@ -147,7 +147,7 @@ export default function OrdersPage() {
               </div>
 
               {/* Footer */}
-              <div style={{ padding: '12px 20px', borderTop: '1px solid var(--gray-100)', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div className="resp-order-footer" style={{ padding: '12px 20px', borderTop: '1px solid var(--gray-100)', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <Link to={`/order/${order._id}`} className="btn btn-primary btn-sm">View Details</Link>
                 {order.status === 'delivered' && (
                   <button

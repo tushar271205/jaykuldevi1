@@ -73,7 +73,7 @@ export default function ProfilePage() {
     <div className="container" style={{ paddingTop: 24, paddingBottom: 48, maxWidth: 900 }}>
       <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>My Account</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 24 }}>
+      <div className="resp-grid-profile" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 24 }}>
         {/* Sidebar */}
         <div className="card" style={{ height: 'fit-content', position: 'sticky', top: 90 }}>
           {/* Avatar */}
@@ -120,7 +120,7 @@ export default function ProfilePage() {
                 <h2 style={{ fontSize: 16, fontWeight: 700 }}>Personal Information</h2>
               </div>
               <div className="card-body">
-                <form onSubmit={handleProfileSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <form onSubmit={handleProfileSave} className="resp-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                     <label className="form-label">Email Address</label>
                     <input className="form-input" value={user?.email || ''} disabled style={{ background: 'var(--gray-50)', color: 'var(--gray-400)' }} />
@@ -155,7 +155,7 @@ export default function ProfilePage() {
 
                   <div style={{ gridColumn: '1 / -1', marginTop: 12, borderTop: '1px solid var(--gray-100)', paddingTop: 16 }}>
                     <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Change Password</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div className="resp-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                       <div className="form-group">
                         <label className="form-label">New Password</label>
                         <input className="form-input" type="password" value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder="Leave blank to keep current" />
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                 <div className="card" style={{ marginBottom: 16 }}>
                   <div className="card-header"><span style={{ fontWeight: 700 }}>New Address</span></div>
                   <div className="card-body">
-                    <form onSubmit={handleAddAddress} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <form onSubmit={handleAddAddress} className="resp-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       {[
                         { k: 'label', l: 'Label (Home/Work)', col: 1 },
                         { k: 'fullName', l: 'Full Name', col: 1 },

@@ -106,7 +106,7 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div className="admin-header-flex" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <h1 style={{ fontSize: 26, fontWeight: 800 }}>Orders</h1>
         {pagination.total > 0 && (
           <span style={{ fontSize: 13, color: 'var(--gray-400)' }}>{pagination.total} total orders</span>
@@ -114,21 +114,23 @@ export default function AdminOrders() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-        <form className="search-form" style={{ backgroundColor: 'white', height: 40, flex: 1, minWidth: 260, maxWidth: 400 }} onSubmit={(e) => { e.preventDefault(); setPage(1); fetchOrders(); }}>
+      <div className="admin-header-flex" style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+        <form className="search-form" style={{ backgroundColor: 'white', height: 40, flex: 1, minWidth: '100%', maxWidth: 'none' }} onSubmit={(e) => { e.preventDefault(); setPage(1); fetchOrders(); }}>
           <IconSearch size={18} color="var(--gray-400)" />
           <input className="search-input" placeholder="Search order #" value={search} onChange={(e) => setSearch(e.target.value)} />
           {search && <button type="button" className="search-clear" onClick={() => { setSearch(''); }}>✕</button>}
         </form>
-        <select className="form-select" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} style={{ maxWidth: 200, height: 40 }}>
-          <option value="">All Status</option>
-          {STATUS_LIST.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
-        </select>
-        <button className="btn btn-outline btn-sm" style={{ height: 40 }} onClick={() => { setPage(1); fetchOrders(); }}>Search</button>
+        <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+          <select className="form-select" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} style={{ flex: 1, height: 40 }}>
+            <option value="">All Status</option>
+            {STATUS_LIST.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
+          </select>
+          <button className="btn btn-outline btn-sm" style={{ height: 40, flexShrink: 0 }} onClick={() => { setPage(1); fetchOrders(); }}>Search</button>
+        </div>
       </div>
 
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--gray-100)', overflow: 'hidden' }}>
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ overflowX: 'auto' }}>
           <table className="data-table">
             <thead>
               <tr>

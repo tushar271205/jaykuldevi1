@@ -1769,3 +1769,589 @@ h4 {
   line-clamp: 1;
   -webkit-box-orient: vertical;
 }
+
+/* ============================================================
+   HOMEPAGE RESPONSIVE
+   ============================================================ */
+.home-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.home-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 32px 16px;
+  justify-items: center;
+}
+
+.home-hero-btns,
+.home-trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .home-hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .home-hero-grid .home-hero-btns,
+  .home-hero-grid .home-trust-badges {
+    justify-content: center;
+  }
+
+  .home-collection-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-collection-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   GLOBAL PRODUCT GRID - RESPONSIVE
+   ============================================================ */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .product-card-body {
+    padding: 10px 8px 12px !important;
+  }
+
+  .product-brand {
+    font-size: 8px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .product-name {
+    font-size: 11px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.3 !important;
+    height: 2.6em !important;
+    /* Force 2 lines height */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .product-price-wrap {
+    flex-wrap: wrap;
+    gap: 4px !important;
+  }
+
+  .product-price {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+  }
+
+  .product-mrp,
+  .product-discount-pct {
+    font-size: 10px !important;
+  }
+
+  /* Compact Add to Bag button on mobile */
+  .product-card .btn-sm {
+    padding: 6px 4px !important;
+    font-size: 9px !important;
+    margin-bottom: 8px !important;
+    min-height: unset !important;
+  }
+
+  /* Make images square on mobile to fit more cards vertically */
+  .product-card-img-wrap {
+    padding-bottom: 100% !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .product-grid {
+    gap: 8px !important;
+  }
+
+  .product-card-body {
+    padding: 8px 6px 10px !important;
+  }
+}
+
+/* ============================================================
+   COMPREHENSIVE MOBILE RESPONSIVE — ALL CUSTOMER PAGES
+   Uses class-based selectors targeting classes added to JSX.
+   Zero impact on desktop layout.
+   ============================================================ */
+
+/* ---------- 768px : Tablet / Small desktop ---------- */
+@media (max-width: 768px) {
+
+  /* --- GLOBAL page spacing --- */
+  .page-layout {
+    padding-top: calc(var(--navbar-height) + 4px) !important;
+  }
+
+  /* --- HOMEPAGE: Hero 2-col → 1-col --- */
+  .resp-grid-hero {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    text-align: center;
+  }
+  .resp-hero-btns {
+    justify-content: center !important;
+  }
+  .resp-grid-hero p {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* --- HOMEPAGE: Offers 4-col → 2-col --- */
+  .resp-grid-offers {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* --- HOMEPAGE: Gender sliders stacked --- */
+  .resp-grid-gender {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .resp-slider-card {
+    height: 300px !important;
+  }
+
+  /* --- HOMEPAGE: Bottom offers + contact --- */
+  .resp-grid-bottom {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* --- PRODUCT DETAIL / Description: 2-col → 1-col --- */
+  .resp-grid-2col {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* --- CHECKOUT / ORDER DETAIL: Main + Sidebar → stacked --- */
+  .resp-grid-sidebar {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* --- PROFILE PAGE: Sidebar + Content → stacked --- */
+  .resp-grid-profile {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* --- PRODUCTS PAGE: Filter sidebar + grid → full width --- */
+  .resp-grid-filters {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* --- Sticky sidebar should not stick on mobile --- */
+  .sticky-top {
+    position: static !important;
+  }
+  .resp-sticky {
+    position: static !important;
+  }
+
+  /* --- Section padding reduce --- */
+  section {
+    padding-top: 28px !important;
+    padding-bottom: 28px !important;
+  }
+
+  /* --- Section headers --- */
+  .section-header {
+    margin-bottom: 14px !important;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .section-title {
+    font-size: 16px !important;
+  }
+
+  .section-link {
+    font-size: 11px !important;
+  }
+
+  /* --- Card padding reduce --- */
+  .card-body {
+    padding: 14px !important;
+  }
+  .card-header {
+    padding: 12px 14px !important;
+  }
+  .card-footer {
+    padding: 10px 14px !important;
+  }
+
+  /* --- Tabs scrollable on mobile --- */
+  .tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+  }
+
+  /* --- Breadcrumb horizontal scroll --- */
+  .breadcrumb {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .breadcrumb::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* --- Modal full-width --- */
+  .modal {
+    max-width: 100% !important;
+    margin: 8px !important;
+    border-radius: 16px !important;
+  }
+
+  /* --- Empty state compact --- */
+  .empty-state {
+    padding: 32px 16px !important;
+  }
+  .empty-state-icon {
+    font-size: 48px !important;
+  }
+  .empty-state-title {
+    font-size: 16px !important;
+  }
+
+  /* --- Pagination compact --- */
+  .pagination {
+    margin-top: 24px !important;
+    gap: 4px !important;
+  }
+  .page-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 12px !important;
+  }
+
+  /* --- Button sizing --- */
+  .btn-lg {
+    padding: 12px 20px !important;
+    font-size: 13px !important;
+  }
+  .btn-xl {
+    padding: 12px 24px !important;
+    font-size: 13px !important;
+  }
+
+  /* --- Form elements compact --- */
+  .form-input, .form-select {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+
+  /* --- Qty stepper compact --- */
+  .qty-stepper button {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .qty-stepper span {
+    width: 32px !important;
+    font-size: 13px !important;
+  }
+
+  /* --- Order tracker compact --- */
+  .tracker-label {
+    font-size: 12px !important;
+  }
+  .tracker-time {
+    font-size: 10px !important;
+  }
+  .tracker-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+  }
+  .tracker-step:not(:last-child)::before {
+    left: 13px !important;
+    top: 30px !important;
+  }
+
+  /* --- Profile dropdown full-screen on mobile --- */
+  .profile-dropdown {
+    position: fixed !important;
+    top: var(--navbar-height) !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 0 0 16px 16px !important;
+    min-width: unset !important;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  /* --- Sort bar chips horizontal scroll --- */
+  .resp-grid-filters .search-form {
+    height: 40px !important;
+  }
+
+  /* --- Collection grid: 5-col → 3-col at 768px --- */
+  .resp-collection-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 20px 12px !important;
+  }
+  .resp-collection-grid > div {
+    max-width: 140px !important;
+  }
+  .resp-collection-grid > div > div:first-child {
+    width: 120px !important;
+    height: 150px !important;
+    border-radius: 18px !important;
+  }
+
+  /* --- Form grids: 2-col → 1-col --- */
+  .resp-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* --- Order card header info — wrap tighter --- */
+  .card > div[style*="flexWrap"] {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  /* --- Order card headers: compact padding on mobile --- */
+  .resp-order-header {
+    padding: 10px 14px !important;
+  }
+  .resp-order-header > div:first-child {
+    gap: 12px !important;
+  }
+
+  /* --- Order card footer buttons wrap --- */
+  .resp-order-footer {
+    padding: 10px 14px !important;
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+
+  /* --- Auth page: full-width single-column on mobile --- */
+  .resp-auth-wrapper {
+    padding: 70px 12px 24px !important;
+  }
+  .resp-auth-container {
+    grid-template-columns: 1fr !important;
+    border-radius: 16px !important;
+    max-width: 480px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
+  }
+  .resp-auth-form {
+    padding: 32px 24px !important;
+  }
+}
+
+/* ---------- 480px : Small phones ---------- */
+@media (max-width: 480px) {
+
+  /* --- HOMEPAGE: Offers — single column on very small --- */
+  .resp-grid-offers {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* --- Gender slider height --- */
+  .resp-slider-card {
+    height: 260px !important;
+  }
+
+  /* --- Homepage hero text --- */
+  .hero-title {
+    font-size: 28px !important;
+    line-height: 1.15 !important;
+  }
+
+  /* --- Collection grid: 3-col → 3-col but smaller items --- */
+  .resp-collection-grid {
+    gap: 16px 8px !important;
+  }
+  .resp-collection-grid > div {
+    max-width: 110px !important;
+  }
+  .resp-collection-grid > div > div:first-child {
+    width: 96px !important;
+    height: 120px !important;
+    border-radius: 14px !important;
+  }
+  .resp-collection-grid > div > div:last-child {
+    font-size: 11px !important;
+  }
+
+  /* --- h1 / h2 sizes on mobile --- */
+  h1 {
+    font-size: 20px !important;
+  }
+  h2 {
+    font-size: 18px !important;
+  }
+
+  /* --- Checkout / Profile / Address forms → 1 col --- */
+  .resp-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* --- Profile page sidebar card no sticky --- */
+  .resp-grid-profile > .card {
+    position: static !important;
+  }
+
+  /* --- Order detail: title + buttons stack --- */
+  div[style*="justifyContent: 'space-between'"][style*="marginBottom: 24"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* --- OrdersPage: header column items compact --- */
+  .card div[style*="padding: '12px 20px'"] {
+    padding: 10px 14px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* --- OrdersPage: item images smaller --- */
+  .card div[style*="width: 56"] {
+    width: 48px !important;
+    height: 60px !important;
+  }
+
+  /* --- Container compact padding --- */
+  .container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* --- Auth page: edge-to-edge on small phones --- */
+  .resp-auth-container {
+    border-radius: 12px !important;
+    margin: 0 4px !important;
+  }
+  .resp-auth-form {
+    padding: 24px 16px !important;
+  }
+  .resp-auth-form h1 {
+    font-size: 22px !important;
+  }
+  .resp-auth-form .form-group {
+    margin-bottom: 4px;
+  }
+
+  /* --- OTP inputs smaller on phones --- */
+  .resp-auth-form input[id^="otp-"] {
+    width: 40px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* ==========================================================================
+   ADMIN PANEL RESPONSIVE STYLES
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .admin-mobile-header {
+    display: flex !important;
+  }
+
+  .admin-sidebar {
+    transform: translateX(-100%);
+    width: 280px !important;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.3);
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-close {
+    display: block !important;
+  }
+
+  .admin-main {
+    margin-left: 0 !important;
+    padding: 80px 16px 24px !important; /* Top padding to clear mobile header */
+  }
+
+  /* Admin Common Layouts */
+  .admin-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .admin-header-flex {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stat-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-stat-card {
+    padding: 16px !important;
+  }
+
+  .admin-stat-card div[style*="width: 52"] {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+  }
+
+  .admin-stat-card div[style*="font-size: 28"] {
+    font-size: 24px !important;
+  }
+}
+
+/* Modal Responsiveness */
+@media (max-width: 600px) {
+  .modal {
+    width: 95% !important;
+    margin: 10px !important;
+  }
+  
+  .resp-auth-form, .modal-body form {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-body [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}

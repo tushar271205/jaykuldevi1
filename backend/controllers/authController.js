@@ -17,7 +17,7 @@ exports.sendOTP = async (req, res, next) => {
     const normalizedEmail = email.toLowerCase();
     const existingUser = await User.findOne({ email: normalizedEmail });
 
-    if (purpose === 'login') {
+    if (purpose === 'login' || purpose === 'reset-password') {
       if (!existingUser || !existingUser.isVerified) {
         return res.status(404).json({ success: false, message: 'No account found with this email. Please register first.' });
       }
@@ -185,4 +185,35 @@ exports.logout = async (req, res, next) => {
 exports.getMe = async (req, res) => {
   const user = await User.findById(req.user._id).populate('wishlist', 'name brand images price discountedPrice sizes colors ratings numReviews');
   res.json({ success: true, user });
+};
+
+// @POST /api/auth/reset-password
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { tempToken, password } = req.body;
+    if (!tempToken || !password || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Invalid token or password (min 6 chars).' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(tempToken, process.env.JWT_ACCESS_SECRET);
+    } catch {
+      return res.status(401).json({ success: false, message: 'Session expired. Please request a new OTP.' });
+    }
+
+    if (!decoded.verified || decoded.purpose !== 'reset-password') {
+      return res.status(401).json({ success: false, message: 'Invalid session.' });
+    }
+
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+
+    user.password = password;
+    await user.save();
+
+    res.json({ success: true, message: 'Password reset successfully. You can now login.' });
+  } catch (error) {
+    next(error);
+  }
 };

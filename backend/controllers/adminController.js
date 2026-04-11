@@ -6,13 +6,13 @@ const Product = require('../models/Product');
 exports.getDashboard = async (req, res, next) => {
   try {
     const [totalOrders, totalRevenue, totalUsers, totalProducts] = await Promise.all([
-      Order.countDocuments({ status: { $ne: 'cancelled' } }),
+      Order.countDocuments({ status: { $nin: ['cancelled', 'pending'] } }),
       Order.aggregate([{ $match: { paymentStatus: 'paid' } }, { $group: { _id: null, total: { $sum: '$finalAmount' } } }]),
       User.countDocuments({ role: 'customer' }),
       Product.countDocuments({ isActive: true }),
     ]);
 
-    const recentOrders = await Order.find()
+    const recentOrders = await Order.find({ status: { $ne: 'pending' } })
       .populate('user', 'name email')
       .sort({ createdAt: -1 })
       .limit(8);
@@ -75,7 +75,7 @@ exports.getRevenueReport = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   try {
     const { page = 1, limit = 20, search } = req.query;
-    const filter = { role: 'customer' };
+    const filter = {}; // Show all roles, not just customers
     if (search) {
       const escapeRegex = (str) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
       const searchRegex = { $regex: escapeRegex(search), $options: 'i' };
@@ -89,3 +89,37 @@ exports.getUsers = async (req, res, next) => {
     res.json({ success: true, users, pagination: { total, page: Number(page), pages: Math.ceil(total / Number(limit)) } });
   } catch (error) { next(error); }
 };
+
+// @DELETE /api/admin/users/:id
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own admin account' });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) { next(error); }
+};
+
+// @PUT /api/admin/users/:id/role
+exports.updateUserRole = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+    if (!['admin', 'customer'].includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role' });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    user.role = role;
+    await user.save();
+
+    res.json({ success: true, message: `User role updated to ${role}` });
+  } catch (error) { next(error); }
+};
+

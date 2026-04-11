@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 import 'swiper/css';
@@ -104,7 +105,7 @@ export default function HomePage() {
         <div style={{ position: 'absolute', bottom: -80, left: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,107,157,0.08)' }} />
 
         <div className="container" style={{ position: 'relative', zIndex: 1, width: '100%' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
+          <div className="resp-grid-hero" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
             {/* Left content */}
             <div>
               <div style={{
@@ -131,14 +132,14 @@ export default function HomePage() {
                 Adorable, trendy & comfortable clothing for kids aged 0–14 years. Explore Boys & Girls collections with new arrivals every week!
               </p>
 
-              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                <Link to="/boys" className="btn btn-lg btn-round" style={{ 
+              <div className="resp-hero-btns" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <Link to="/boys" className="btn btn-lg btn-round" style={{
                   background: '#0097a7', color: 'white', border: 'none',
                   boxShadow: '0 4px 15px rgba(0, 151, 167, 0.3)'
                 }}>
                   Shop Boys <IconBoy size={16} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: 4 }} />
                 </Link>
-                <Link to="/girls" className="btn btn-lg btn-round" style={{ 
+                <Link to="/girls" className="btn btn-lg btn-round" style={{
                   background: '#ff6b9d', color: 'white', border: 'none',
                   boxShadow: '0 4px 15px rgba(255, 107, 157, 0.3)'
                 }}>
@@ -147,7 +148,7 @@ export default function HomePage() {
               </div>
 
               {/* Trust badges */}
-              <div style={{ display: 'flex', gap: 20, marginTop: 32, flexWrap: 'wrap' }}>
+              <div className="resp-hero-btns" style={{ display: 'flex', gap: 20, marginTop: 32, flexWrap: 'wrap' }}>
                 {[[<IconLeaf size={14} key="leaf" />, 'Soft Fabrics'], [<IconShield size={14} key="shield" />, 'Quality Assured'], [<IconTruck size={14} key="truck" />, 'Free Shipping ₹499+']].map(([icon, text]) => (
                   <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--gray-600)', fontWeight: 500 }}>
                     <span>{icon}</span> {text}
@@ -198,15 +199,15 @@ export default function HomePage() {
         <div className="container">
           <div style={{ fontSize: 20, color: 'var(--gray-500)', marginBottom: 30, fontWeight: 1000 }}>Shop by Collection</div>
           <div style={{ paddingBottom: 8 }}>
-            <div style={{
+            <div className="resp-collection-grid" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(5, 1fr)',
               gap: '32px 16px',
               justifyItems: 'center'
             }}>
               {[
-                { img: 'https://i.pinimg.com/1200x/59/b3/6c/59b36c358b949250facc3da5749f18b0.jpg', label: 'Infant Sets', cat: '', sub: 'sets' },
-                { img: 'https://i.pinimg.com/1200x/cc/21/6f/cc216f90721b51624c320f89cae07d0a.jpg', label: '2-4 Years', cat: '', sub: '' },
+                { img: 'https://images.unsplash.com/photo-1522771930-78848d9293e8?w=400&h=500&fit=crop&auto=format', label: 'Infant Sets', cat: '', sub: 'sets' },
+                { img: 'https://res.cloudinary.com/dgvodadtz/image/upload/v1775762828/cc216f90721b51624c320f89cae07d0a_v1iebq.jpg', label: '2-4 Years', cat: '', sub: '' },
                 { img: 'https://i.pinimg.com/1200x/f3/fb/4b/f3fb4b96743ebddb31875c90b69af224.jpg', label: '4-6 Years', cat: '', sub: '' },
                 { img: 'https://i.pinimg.com/1200x/6f/b3/8b/6fb38b0fefaaa311028a938e13536ef6.jpg', label: '6-14 Years', cat: '', sub: '' },
                 { img: 'https://i.pinimg.com/1200x/7d/f4/cf/7df4cf21dc52015f5ce08d0e95926dcb.jpg', label: 'Boy Shirts', cat: 'boys', sub: 'shirts' },
@@ -235,7 +236,7 @@ export default function HomePage() {
                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--primary-light)'; e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'transparent'; e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
                   >
-                    <img src={item.img} alt={item.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={item.img} alt={item.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" />
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-800)', whiteSpace: 'nowrap' }}>
                     {item.label}
@@ -254,7 +255,7 @@ export default function HomePage() {
             <h2 className="section-title">Exclusive Offers</h2>
             <Link to="/products" className="section-link">View All →</Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+          <div className="resp-grid-offers" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
             {OFFERS.map((offer) => (
               <div key={offer.code} style={{
                 background: offer.bg,
@@ -278,11 +279,20 @@ export default function HomePage() {
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--gray-600)', marginBottom: 6 }}>{offer.sub}</div>
                   <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
                     border: `1px solid ${offer.color}`, borderRadius: 4,
-                    padding: '2px 8px', fontSize: 11, fontWeight: 700, color: offer.color,
-                  }}>
+                    padding: '4px 10px', fontSize: 11, fontWeight: 700, color: offer.color,
+                    cursor: 'copy',
+                  }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigator.clipboard.writeText(offer.code);
+                      toast.success(`${offer.code} copied!`);
+                    }}
+                    title="Copy Code"
+                  >
                     <span>CODE:</span> <span>{offer.code}</span>
+                    <span style={{ fontSize: 13, background: offer.color, color: 'white', padding: '2px 6px', borderRadius: 4, marginLeft: 4, opacity: 0.9 }}>Copy</span>
                   </div>
                 </div>
               </div>
@@ -319,14 +329,14 @@ export default function HomePage() {
             <Link to="/products" className="section-link">Explore All Categories →</Link>
           </div>
 
-          <div style={{
+          <div className="resp-grid-gender" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: 24,
             marginTop: 20
           }}>
             {/* Boys Slider */}
-            <div style={{ borderRadius: 24, overflow: 'hidden', height: 420, position: 'relative' }}>
+            <div className="resp-slider-card" style={{ borderRadius: 24, overflow: 'hidden', height: 420, position: 'relative' }}>
               <Swiper
                 modules={[Autoplay, Pagination, EffectFade]}
                 effect="fade"
@@ -360,7 +370,7 @@ export default function HomePage() {
             </div>
 
             {/* Girls Slider */}
-            <div style={{ borderRadius: 24, overflow: 'hidden', height: 420, position: 'relative' }}>
+            <div className="resp-slider-card" style={{ borderRadius: 24, overflow: 'hidden', height: 420, position: 'relative' }}>
               <Swiper
                 modules={[Autoplay, Pagination, EffectFade]}
                 effect="fade"
@@ -484,7 +494,7 @@ export default function HomePage() {
       {/* ========== BOTTOM SECTION — OFFERS & CONTACT ========== */}
       <section style={{ padding: '60px 0', background: 'white' }}>
         <div className="container">
-          <div style={{
+          <div className="resp-grid-bottom" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: 24

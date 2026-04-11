@@ -43,27 +43,27 @@ export default function AdminRevenue() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
+      <div className="admin-header-flex" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
         <h1 style={{ fontSize: 26, fontWeight: 800 }}>Revenue Report</h1>
         <select
           className="form-select"
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          style={{ maxWidth: 120 }}
+          style={{ maxWidth: 120, height: 40 }}
         >
           {[2026, 2027, 2028, 2029].map((y) => <option key={y} value={y}>{y}</option>)}
         </select>
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
+      <div className="admin-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
         {[
           { label: 'Total Revenue', value: `₹${totalRevenue.toLocaleString('en-IN')}`, color: '#10b981', icon: <IconDollar size={18} /> },
           { label: 'Total Orders', value: totalOrders.toLocaleString(), color: '#3b82f6', icon: <IconPackage size={18} /> },
           { label: 'Avg Order Value', value: totalOrders ? `₹${Math.round(totalRevenue / totalOrders).toLocaleString('en-IN')}` : '₹0', color: '#8b5cf6', icon: <IconBarChart size={18} /> },
           { label: 'Best Month', value: MONTHS[monthlyRevenue.indexOf(Math.max(...monthlyRevenue))] || '—', color: '#f59e0b', icon: <IconTrophy size={18} /> },
         ].map((card) => (
-          <div key={card.label} style={{ background: 'white', borderRadius: 16, padding: '20px 20px', border: '1px solid var(--gray-100)', boxShadow: 'var(--shadow-sm)' }}>
+          <div key={card.label} className="admin-stat-card" style={{ background: 'white', borderRadius: 16, padding: '20px 20px', border: '1px solid var(--gray-100)', boxShadow: 'var(--shadow-sm)' }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', marginBottom: 8 }}>{card.icon} {card.label}</div>
             <div style={{ fontSize: 26, fontWeight: 900, color: 'var(--gray-900)', fontFamily: 'var(--font-display)' }}>{card.value}</div>
           </div>
@@ -127,7 +127,7 @@ export default function AdminRevenue() {
         <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--gray-100)' }}>
           <h2 style={{ fontSize: 16, fontWeight: 700 }}>Month-by-Month Breakdown</h2>
         </div>
-        <div className="table-wrap">
+        <div className="table-wrap" style={{ overflowX: 'auto' }}>
           <table className="data-table">
             <thead>
               <tr>

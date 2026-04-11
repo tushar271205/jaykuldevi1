@@ -1,10 +1,10 @@
 import api from './axios';
 
-export const createRazorpayOrder = (payload) =>
-  api.post('/orders/create-razorpay-order', payload);
+export const createStripePaymentIntent = (payload) =>
+  api.post('/orders/create-stripe-payment-intent', payload);
 
-export const verifyPayment = (payload) =>
-  api.post('/orders/verify-payment', payload);
+export const confirmPayment = (payload) =>
+  api.post('/orders/confirm-payment', payload);
 
 export const placeCODOrder = (payload) =>
   api.post('/orders/cod', payload);

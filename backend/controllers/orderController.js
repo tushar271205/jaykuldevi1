@@ -1,4 +1,4 @@
-const Razorpay = require('razorpay');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const crypto = require('crypto');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
@@ -6,11 +6,6 @@ const Coupon = require('../models/Coupon');
 const User = require('../models/User');
 const { sendEmail, emailTemplates, getStatusEmailContent } = require('../utils/emailService');
 const { generateBillPDF } = require('../utils/pdfGenerator');
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
 
 const calculateOrderTotal = async (items, couponCode, userId) => {
   let subtotal = 0;
@@ -72,27 +67,27 @@ const calculateOrderTotal = async (items, couponCode, userId) => {
   return { processedItems, subtotal, discountTotal, couponDiscount, couponObj, firstOrderDiscount, shippingCharge, finalAmount };
 };
 
-// @POST /api/orders/create-razorpay-order
-exports.createRazorpayOrder = async (req, res, next) => {
+// @POST /api/orders/create-stripe-payment-intent
+exports.createStripePaymentIntent = async (req, res, next) => {
   try {
     const { items, shippingAddress, couponCode } = req.body;
     const { processedItems, subtotal, discountTotal, couponDiscount, couponObj, firstOrderDiscount, shippingCharge, finalAmount } =
       await calculateOrderTotal(items, couponCode, req.user._id);
 
-    const razorpayOrder = await razorpay.orders.create({
+    const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(finalAmount * 100),
-      currency: 'INR',
-      receipt: `kw_${Date.now()}`,
+      currency: 'inr',
+      metadata: { userId: req.user._id.toString() },
     });
 
-    // Store pending order in session-like temp storage (create as pending)
+    // Store pending order
     const order = await Order.create({
       user: req.user._id,
       items: processedItems,
       shippingAddress,
-      paymentMethod: 'razorpay',
+      paymentMethod: 'stripe',
       paymentStatus: 'pending',
-      razorpayOrderId: razorpayOrder.id,
+      stripePaymentIntentId: paymentIntent.id,
       status: 'pending',
       couponCode,
       couponDiscount,
@@ -108,10 +103,10 @@ exports.createRazorpayOrder = async (req, res, next) => {
     res.json({
       success: true,
       orderId: order._id,
-      razorpayOrderId: razorpayOrder.id,
-      amount: razorpayOrder.amount,
-      currency: razorpayOrder.currency,
-      keyId: process.env.RAZORPAY_KEY_ID,
+      clientSecret: paymentIntent.client_secret,
+      amount: finalAmount,
+      currency: 'INR',
+      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
       orderSummary: { subtotal, discountTotal, couponDiscount, firstOrderDiscount, shippingCharge, finalAmount },
     });
   } catch (error) {
@@ -119,26 +114,22 @@ exports.createRazorpayOrder = async (req, res, next) => {
   }
 };
 
-// @POST /api/orders/verify-payment
-exports.verifyPayment = async (req, res, next) => {
+// @POST /api/orders/confirm-payment
+exports.confirmPayment = async (req, res, next) => {
   try {
-    const { orderId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+    const { orderId, stripePaymentIntentId } = req.body;
 
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpayOrderId}|${razorpayPaymentId}`)
-      .digest('hex');
+    const paymentIntent = await stripe.paymentIntents.retrieve(stripePaymentIntentId);
 
-    if (expectedSignature !== razorpaySignature) {
-      return res.status(400).json({ success: false, message: 'Payment verification failed. Invalid signature.' });
+    if (paymentIntent.status !== 'succeeded') {
+      return res.status(400).json({ success: false, message: `Payment not completed. Status: ${paymentIntent.status}` });
     }
 
     const order = await Order.findById(orderId).populate('user');
     if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });
 
     order.paymentStatus = 'paid';
-    order.razorpayPaymentId = razorpayPaymentId;
-    order.razorpaySignature = razorpaySignature;
+    order.stripePaymentId = paymentIntent.latest_charge;
     order.status = 'confirmed';
     order.statusHistory.push({ status: 'confirmed', message: 'Payment received. Order confirmed.' });
     await order.save();
@@ -146,7 +137,7 @@ exports.verifyPayment = async (req, res, next) => {
     // Update stock & first order flag
     await _postOrderConfirmation(order);
 
-    res.json({ success: true, message: 'Payment verified. Order confirmed!', order });
+    res.json({ success: true, message: 'Payment confirmed. Order confirmed!', order });
   } catch (error) {
     next(error);
   }
@@ -216,7 +207,10 @@ const _postOrderConfirmation = async (order) => {
 exports.getMyOrders = async (req, res, next) => {
   try {
     const { page = 1, limit = 10, status } = req.query;
-    const filter = { user: req.user._id };
+    const filter = { 
+      user: req.user._id,
+      status: { $ne: 'pending' } // Exclude abandoned online payment attempts
+    };
     if (status) filter.status = status;
     const skip = (Number(page) - 1) * Number(limit);
 
@@ -264,7 +258,7 @@ exports.cancelOrder = async (req, res, next) => {
       );
     }
 
-    if (order.paymentMethod === 'razorpay' && order.paymentStatus === 'paid') {
+    if (order.paymentMethod === 'stripe' && order.paymentStatus === 'paid') {
       order.paymentStatus = 'refund_pending';
       order.statusHistory.push({ status: 'cancelled', message: 'Order cancelled. Refund pending admin approval.' });
 
@@ -335,11 +329,10 @@ exports.approveRefund = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Order is not eligible for refund approval.' });
     }
 
-    // Trigger Razorpay Refund API
-    if (order.razorpayPaymentId) {
-      // Razorpay refund API automatically full refunds if amount is not specified, but we'll specify it to be safe
-      await razorpay.payments.refund(order.razorpayPaymentId, {
-        amount: Math.round(order.finalAmount * 100)
+    // Trigger Stripe Refund API
+    if (order.stripePaymentIntentId) {
+      await stripe.refunds.create({
+        payment_intent: order.stripePaymentIntentId,
       });
     }
 
@@ -380,7 +373,7 @@ exports.downloadBill = async (req, res, next) => {
 exports.getAllOrders = async (req, res, next) => {
   try {
     const { page = 1, limit = 20, status, search } = req.query;
-    const filter = {};
+    const filter = { status: { $ne: 'pending' } };
     if (status) filter.status = status;
     if (search) {
       const escapeRegex = (str) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');

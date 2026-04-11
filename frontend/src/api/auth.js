@@ -17,3 +17,5 @@ export const getMe = () => api.get('/auth/me');
 
 export const refreshToken = (token) =>
   api.post('/auth/refresh-token', { refreshToken: token });
+
+export const resetPassword = (data) => api.post('/auth/reset-password', data);

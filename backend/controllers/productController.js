@@ -153,8 +153,25 @@ exports.updateProduct = async (req, res, next) => {
     if (typeof updateData.colors === 'string') updateData.colors = JSON.parse(updateData.colors);
     if (typeof updateData.tags === 'string') updateData.tags = JSON.parse(updateData.tags);
 
+    const productBeforeUpdate = await Product.findById(req.params.id);
+    if (!productBeforeUpdate) return res.status(404).json({ success: false, message: 'Product not found.' });
+
+    if (updateData.price !== undefined) {
+      const discount = productBeforeUpdate.discount;
+      let newPrice = Number(updateData.price);
+      let discountedPrice = newPrice;
+
+      if (discount && discount.active) {
+        if (discount.type === 'percent') {
+          discountedPrice = Math.round(newPrice * (1 - discount.percent / 100));
+        } else if (discount.type === 'flat') {
+          discountedPrice = Math.max(0, newPrice - discount.flatAmount);
+        }
+      }
+      updateData.discountedPrice = discountedPrice;
+    }
+
     const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
-    if (!product) return res.status(404).json({ success: false, message: 'Product not found.' });
     res.json({ success: true, message: 'Product updated.', product });
   } catch (error) {
     next(error);

@@ -163,7 +163,7 @@ export default function AdminCoupons() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div className="admin-header-flex" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <h1 style={{ fontSize: 26, fontWeight: 800 }}>Coupons & Offers</h1>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Create Coupon</button>
       </div>

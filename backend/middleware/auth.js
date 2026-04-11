@@ -31,9 +31,14 @@ exports.adminOnly = (req, res, next) => {
 };
 
 exports.generateAccessToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m' });
+  let expiresIn = process.env.JWT_ACCESS_EXPIRE || '15m';
+  // Render env vars might accidentally include quotes or extra spaces
+  expiresIn = String(expiresIn).replace(/['"]/g, '').trim();
+  return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, { expiresIn });
 };
 
 exports.generateRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d' });
+  let expiresIn = process.env.JWT_REFRESH_EXPIRE || '7d';
+  expiresIn = String(expiresIn).replace(/['"]/g, '').trim();
+  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn });
 };

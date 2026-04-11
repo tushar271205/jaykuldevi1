@@ -5,7 +5,7 @@ import * as authApi from '../../api/auth';
 import toast from 'react-hot-toast';
 import { IconShirt, IconCheck, IconHeart, IconPackage, IconGift, IconBoy, IconGirl, IconChild, IconWarning, IconEye, IconEyeOff } from '../../components/common/Icons';
 
-const STEPS = { EMAIL: 'email', OTP: 'otp', DETAILS: 'details', PASSWORD: 'password' };
+const STEPS = { EMAIL: 'email', OTP: 'otp', DETAILS: 'details', PASSWORD: 'password', RESET_PASSWORD: 'reset_password' };
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -55,13 +55,14 @@ export default function AuthPage() {
     setLoading(true);
     setErrors({});
     try {
-      await authApi.sendOTP(email, mode);
+      const purpose = mode === 'forgot-password' ? 'reset-password' : mode;
+      await authApi.sendOTP(email, purpose);
       setStep(STEPS.OTP);
       setOtpTimer(60);
       toast.success(`OTP sent to ${email}`);
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to send OTP';
-      if (mode === 'login' && err.response?.status === 404) {
+      if ((mode === 'login' || mode === 'forgot-password') && err.response?.status === 404) {
         toast.error('No account found. Please register first.');
         setMode('register');
         navigate('/register');
@@ -104,10 +105,13 @@ export default function AuthPage() {
     setLoading(true);
     setErrors({});
     try {
-      const res = await authApi.verifyOTP(email, otpStr, mode);
+      const purpose = mode === 'forgot-password' ? 'reset-password' : mode;
+      const res = await authApi.verifyOTP(email, otpStr, purpose);
       setTempToken(res.data.tempToken);
       if (mode === 'register') {
         setStep(STEPS.DETAILS);
+      } else if (mode === 'forgot-password') {
+        setStep(STEPS.RESET_PASSWORD);
       } else {
         setStep(STEPS.PASSWORD);
       }
@@ -159,8 +163,26 @@ export default function AuthPage() {
     }
   };
 
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!password || password.length < 6) { setErrors({ password: 'Password must be at least 6 characters' }); return; }
+    setLoading(true);
+    try {
+      await authApi.resetPassword({ tempToken, password });
+      toast.success('Password reset successfully. You can now login.');
+      setMode('login');
+      setStep(STEPS.PASSWORD);
+      setPassword('');
+      setErrors({});
+    } catch (err) {
+      setErrors({ password: err.response?.data?.message || 'Failed to reset password' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div style={{
+    <div className="resp-auth-wrapper" style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #e8f5e9 100%)',
       display: 'flex',
@@ -168,7 +190,7 @@ export default function AuthPage() {
       justifyContent: 'center',
       padding: '80px 20px 40px',
     }}>
-      <div style={{
+      <div className="resp-auth-container" style={{
         width: '100%',
         maxWidth: 960,
         background: 'white',
@@ -225,36 +247,38 @@ export default function AuthPage() {
         </div>
 
         {/* RIGHT — Form */}
-        <div style={{ padding: '48px 44px' }}>
+        <div className="resp-auth-form" style={{ padding: '48px 44px' }}>
           {/* Mode toggle */}
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>
-              {mode === 'login' ? 'Login to Your Account' : 'Create Your Account'}
+              {mode === 'login' ? 'Login to Your Account' : mode === 'forgot-password' ? 'Reset Your Password' : 'Create Your Account'}
             </h1>
             <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>
-              {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+              {mode === 'forgot-password' ? "Remember your password? " : mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
               <span
                 style={{ color: 'var(--primary)', fontWeight: 700, cursor: 'pointer' }}
                 onClick={() => {
-                  setMode(mode === 'login' ? 'register' : 'login');
-                  navigate(mode === 'login' ? '/register' : '/login');
+                  const nextMode = mode === 'login' ? 'register' : 'login';
+                  setMode(nextMode);
+                  navigate(nextMode === 'login' ? '/login' : '/register');
                   setStep(STEPS.EMAIL);
                   setErrors({});
                   setOtp(['', '', '', '', '', '']);
+                  setPassword('');
                 }}
               >
-                {mode === 'login' ? 'Register' : 'Login'}
+                {mode === 'forgot-password' ? 'Login' : mode === 'login' ? 'Register' : 'Login'}
               </span>
             </p>
           </div>
 
           {/* Progress Indicator */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
-            {[STEPS.EMAIL, STEPS.OTP, mode === 'register' ? STEPS.DETAILS : STEPS.PASSWORD].map((s, i) => (
+            {[STEPS.EMAIL, STEPS.OTP, mode === 'register' ? STEPS.DETAILS : mode === 'forgot-password' ? STEPS.RESET_PASSWORD : STEPS.PASSWORD].map((s, i) => (
               <div key={s} style={{
                 width: step === s ? 24 : 8, height: 8,
                 borderRadius: 4,
-                background: [STEPS.EMAIL, STEPS.OTP, STEPS.DETAILS, STEPS.PASSWORD].indexOf(step) >= i
+                background: [STEPS.EMAIL, STEPS.OTP, STEPS.DETAILS, STEPS.PASSWORD, STEPS.RESET_PASSWORD].indexOf(step) >= i
                   ? 'var(--primary)' : 'var(--gray-200)',
                 transition: 'all 0.3s',
               }} />
@@ -348,7 +372,8 @@ export default function AuthPage() {
                     style={{ color: 'var(--primary)', fontWeight: 700, cursor: 'pointer', background: 'none', border: 'none', fontSize: 13 }}
                     onClick={async () => {
                       try {
-                        await authApi.sendOTP(email, mode);
+                        const purpose = mode === 'forgot-password' ? 'reset-password' : mode;
+                        await authApi.sendOTP(email, purpose);
                         setOtpTimer(60);
                         setOtp(['', '', '', '', '', '']);
                         setErrors({});
@@ -457,8 +482,46 @@ export default function AuthPage() {
               <button type="submit" className={`btn btn-primary btn-full btn-lg${loading ? ' btn-loading' : ''}`} disabled={loading} id="login-btn">
                 {loading ? 'Logging in...' : 'LOGIN →'}
               </button>
-              <button type="button" className="btn btn-ghost btn-sm" onClick={() => setStep(STEPS.EMAIL)} style={{ color: 'var(--gray-400)' }}>
-                ← Back
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => setStep(STEPS.EMAIL)} style={{ color: 'var(--gray-400)' }}>
+                  ← Back
+                </button>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setMode('forgot-password'); setStep(STEPS.EMAIL); setPassword(''); setErrors({}); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>
+                  Forgot Password?
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* STEP 3c: Reset Password */}
+          {step === STEPS.RESET_PASSWORD && (
+            <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={{ textAlign: 'center', marginBottom: 8 }}>
+                <p style={{ fontSize: 14, color: 'var(--gray-600)' }}>
+                  Set a new password for <strong>{email}</strong>
+                </p>
+              </div>
+              <div className="form-group">
+                <label className="form-label">New Password</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    className={`form-input${errors.password ? ' error' : ''}`}
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Min 6 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoFocus
+                    id="reset-password-input"
+                  />
+                  <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', fontSize: 14 }}
+                    onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                  </button>
+                </div>
+                {errors.password && <span className="form-error"><IconWarning size={12} style={{ display: 'inline', verticalAlign: 'middle' }} /> {errors.password}</span>}
+              </div>
+              <button type="submit" className={`btn btn-primary btn-full btn-lg${loading ? ' btn-loading' : ''}`} disabled={loading} id="reset-btn">
+                {loading ? 'Resetting...' : 'RESET PASSWORD →'}
               </button>
             </form>
           )}

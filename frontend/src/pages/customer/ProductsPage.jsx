@@ -114,13 +114,12 @@ export default function ProductsPage({ category: propCategory }) {
         <button
           className="btn btn-outline-dark btn-sm show-mobile"
           onClick={() => setFiltersOpen(true)}
-          style={{ display: 'none' }}
         >
-          Filters
+          ☰ Filters
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 24 }}>
+      <div className="resp-grid-filters" style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 24 }}>
         {/* FILTERS SIDEBAR */}
         <aside className="hide-mobile" style={{ flexShrink: 0 }}>
           <div className="card sticky-top" style={{ overflow: 'visible' }}>
@@ -214,6 +213,83 @@ export default function ProductsPage({ category: propCategory }) {
           </div>
         </aside>
 
+        {/* MOBILE FILTER DRAWER */}
+        {filtersOpen && (
+          <>
+            <div className="show-mobile" style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
+              zIndex: 'var(--z-overlay)', animation: 'fadeIn 0.2s ease',
+            }} onClick={() => setFiltersOpen(false)} />
+            <div className="show-mobile" style={{
+              position: 'fixed', top: 0, left: 0, width: '85%', maxWidth: 320,
+              height: '100vh', background: 'white', zIndex: 'var(--z-modal)',
+              overflowY: 'auto', padding: '20px 16px',
+              animation: 'slideLeft 0.3s ease', boxShadow: '5px 0 15px rgba(0,0,0,0.1)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <span style={{ fontWeight: 700, fontSize: 16 }}>FILTERS</span>
+                <button style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' }} onClick={() => setFiltersOpen(false)}>✕</button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {/* Category */}
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Category</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
+                      <input type="radio" checked={!selectedSubCat} onChange={() => { setSelectedSubCat(''); setPage(1); }} />
+                      <span>All</span>
+                    </label>
+                    {subCatList.map((sub) => (
+                      <label key={sub} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
+                        <input type="radio" checked={selectedSubCat === sub} onChange={() => { setSelectedSubCat(sub); setPage(1); }} />
+                        <span style={{ textTransform: 'capitalize' }}>{sub.replace('-', ' ')}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Price Range */}
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Price Range</div>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <input className="form-input" type="number" placeholder="Min" value={minPrice}
+                      onChange={(e) => { setMinPrice(e.target.value); setPage(1); }} style={{ fontSize: 13 }} />
+                    <span style={{ color: 'var(--gray-400)', flexShrink: 0 }}>—</span>
+                    <input className="form-input" type="number" placeholder="Max" value={maxPrice}
+                      onChange={(e) => { setMaxPrice(e.target.value); setPage(1); }} style={{ fontSize: 13 }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+                    {[299, 499, 699, 999].map((p) => (
+                      <button key={p} className={`chip${maxPrice == p ? ' active' : ''}`} style={{ fontSize: 11, padding: '3px 8px' }}
+                        onClick={() => { setMaxPrice(p == maxPrice ? '' : p); setPage(1); }}>
+                        Under ₹{p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Sizes */}
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>Size</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {SIZES.map((size) => (
+                      <button key={size} className={`chip${selectedSizes.includes(size) ? ' active' : ''}`}
+                        style={{ fontSize: 11, padding: '3px 8px' }} onClick={() => toggleSize(size)}>
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn btn-outline btn-sm" onClick={() => { clearFilters(); setFiltersOpen(false); }} style={{ flex: 1 }}>Clear All</button>
+                  <button className="btn btn-primary btn-sm" onClick={() => setFiltersOpen(false)} style={{ flex: 1 }}>Apply</button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         {/* PRODUCTS GRID */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Advanced Search */}
@@ -285,7 +361,7 @@ export default function ProductsPage({ category: propCategory }) {
 
           {/* Products */}
           {loading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+            <div className="product-grid">
               {Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : products.length === 0 ? (
@@ -297,7 +373,7 @@ export default function ProductsPage({ category: propCategory }) {
             </div>
           ) : (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16 }}>
+              <div className="product-grid">
                 {products.map((p) => <ProductCard key={p._id} product={p} />)}
               </div>
 

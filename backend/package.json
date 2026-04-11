@@ -8,7 +8,12 @@
     "dev": "nodemon server.js",
     "seed": "node utils/seeder.js"
   },
-  "keywords": ["ecommerce", "kids", "fashion", "mern"],
+  "keywords": [
+    "ecommerce",
+    "kids",
+    "fashion",
+    "mern"
+  ],
   "author": "Jay Kuldevi",
   "license": "ISC",
   "dependencies": {
@@ -28,6 +33,7 @@
     "nodemailer": "^6.9.14",
     "pdfkit": "^0.15.0",
     "razorpay": "^2.9.2",
+    "stripe": "^22.0.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

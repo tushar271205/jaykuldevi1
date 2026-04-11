@@ -71,7 +71,7 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="container" style={{ paddingTop: 24, paddingBottom: 48 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
+        <div className="resp-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
           <div>
             <div className="skeleton" style={{ paddingBottom: '120%', borderRadius: 12 }} />
           </div>
@@ -119,7 +119,7 @@ export default function ProductDetailPage() {
           <span>{product.name}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
+        <div className="resp-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'start' }}>
           {/* LEFT — Scrollable Image Gallery */}
           <div style={{ position: 'relative' }}>
             <div
@@ -237,7 +237,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* RIGHT — Product Info */}
-          <div style={{ position: 'sticky', top: 90 }}>
+          <div className="resp-sticky" style={{ position: 'sticky', top: 90 }}>
             <div style={{ fontFamily: 'var(--font-brand)', fontSize: 14, fontWeight: 600, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: 6, letterSpacing: '1.5px', textShadow: '0.1px 0 0 var(--primary)' }}>
               {product.brand || 'Jay Kuldevi'}
             </div>
@@ -447,7 +447,7 @@ export default function ProductDetailPage() {
 
         <div style={{ padding: '24px 0' }}>
           {activeTab === 'description' ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+            <div className="resp-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
               <div>
                 <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>Product Description</h3>
                 <p style={{ fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.7 }}>{product.description}</p>
@@ -556,7 +556,7 @@ export default function ProductDetailPage() {
           <div className="section-header">
             <h2 className="section-title">You May Also Like</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14 }}>
+          <div className="product-grid">
             {related.map((p) => <ProductCard key={p._id} product={p} />)}
           </div>
         </div>
