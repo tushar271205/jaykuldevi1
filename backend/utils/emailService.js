@@ -1,45 +1,57 @@
-const { Resend } = require('resend');
-
-// Initialize Resend with the provided API key
-const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_3576JKfs_3TBE1QEwpvcjM7Av47RyPox7';
-const resend = new Resend(RESEND_API_KEY);
+// Initialize Brevo API key
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
 // Log email config status on startup
-console.log('[Email] Config check — RESEND_API_KEY:', RESEND_API_KEY ? '✅ set' : '❌ MISSING');
+console.log('[Email] Config check — BREVO_API_KEY:', BREVO_API_KEY ? '✅ set' : '❌ MISSING');
 
 const sendEmail = async ({ to, subject, html, attachments }) => {
-  if (!RESEND_API_KEY) {
-    const errMsg = 'Email service not configured. RESEND_API_KEY is required.';
+  if (!BREVO_API_KEY) {
+    const errMsg = 'Email service not configured. BREVO_API_KEY is required.';
     console.error('[Email] ' + errMsg);
     throw new Error(errMsg);
   }
 
   try {
-    // Format attachments for Resend
-    const resendAttachments = attachments ? attachments.map(att => ({
-      filename: att.filename,
-      content: att.content
+    // Format attachments for Brevo (Requires base64 string for content)
+    const brevoAttachments = attachments ? attachments.map(att => ({
+      name: att.filename,
+      content: Buffer.isBuffer(att.content) ? att.content.toString('base64') : att.content
     })) : undefined;
 
-    // Resend requires the 'From' domain to match a verified domain.
-    // Since you are likely testing, we use Resend's default onboarding email.
-    // If you verify your own domain (e.g., jaykuldevi.com) in Resend, you can change this back to your domain email.
-    const fromEmail = 'Jay Kuldevi <onboarding@resend.dev>';
+    // The sender email MUST be the one verified on your Brevo account.
+    const senderEmail = process.env.EMAIL_USER || 'tmakwana585@gmail.com';
 
-    const { data, error } = await resend.emails.send({
-      from: fromEmail,
-      to,
-      subject,
-      html,
-      attachments: resendAttachments,
+    const payload = {
+      sender: {
+        name: 'Jay Kuldevi',
+        email: senderEmail
+      },
+      to: [
+        { email: to }
+      ],
+      subject: subject,
+      htmlContent: html,
+      attachment: brevoAttachments,
+    };
+
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     });
 
-    if (error) {
-      console.error('[Email] ❌ Send failed to:', to, '| Resend API Error:', error.message);
-      throw new Error(error.message);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('[Email] ❌ Send failed to:', to, '| Brevo API Error:', data);
+      throw new Error(data.message || 'Failed to send email via Brevo');
     }
 
-    console.log('[Email] ✅ Sent to:', to, '| MessageId:', data.id);
+    console.log('[Email] ✅ Sent to:', to, '| Message Ids:', data.messageId);
   } catch (error) {
     console.error('[Email] ❌ Send failed to:', to, '| System Error:', error.message);
     throw error;
