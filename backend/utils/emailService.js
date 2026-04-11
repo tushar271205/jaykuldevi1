@@ -20,6 +20,7 @@ const sendEmail = async ({ to, subject, html, attachments }) => {
     });
   } catch (error) {
     console.error('Email send failed:', error.message);
+    throw error; // Re-throw so the API handler knows it failed
   }
 };
 
