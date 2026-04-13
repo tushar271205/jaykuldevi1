@@ -55,7 +55,7 @@ export default function ProductsPage({ category: propCategory }) {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const params = { page, limit: 30, sort };
+      const params = { page, limit: 40, sort };
       if (category) params.category = category;
       if (selectedSubCat) params.subCategory = selectedSubCat;
       if (selectedSizes.length > 0) params.size = selectedSizes;
