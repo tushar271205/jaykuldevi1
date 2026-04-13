@@ -189,6 +189,7 @@ export default function AdminCoupons() {
                 border: `1.5px dashed ${coupon.isActive && !isExpired ? 'var(--primary)' : 'var(--gray-200)'}`,
                 overflow: 'hidden',
                 boxShadow: coupon.isActive && !isExpired ? '0 4px 16px rgba(0,188,212,0.1)' : 'var(--shadow-sm)',
+                display: 'flex', flexDirection: 'column',
               }}>
                 {/* Coupon Header */}
                 <div style={{
@@ -207,7 +208,7 @@ export default function AdminCoupons() {
                 </div>
 
                 {/* Coupon Details */}
-                <div style={{ padding: '12px 20px' }}>
+                <div style={{ padding: '12px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 12 }}>
                     {coupon.minOrderValue > 0 && (
                       <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>
@@ -231,7 +232,7 @@ export default function AdminCoupons() {
                     )}
                   </div>
 
-                  <div style={{ display: 'flex', gap: 8 }}>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
                     <button className="btn btn-outline btn-sm" style={{ flex: 1, color: 'var(--primary)', borderColor: 'var(--primary)' }} onClick={() => setEditCoupon(coupon)}>Edit</button>
                     <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }} onClick={() => handleDelete(coupon._id, coupon.code)}>Delete</button>
                   </div>
