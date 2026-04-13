@@ -97,7 +97,6 @@ const emailTemplates = {
           📦 Track your orders in real-time<br>
           🎁 Enjoy exclusive discounts just for you!</p>
           <div style="text-align:center;margin:32px 0">
-            <a href="${process.env.FRONTEND_URL}" style="background:linear-gradient(135deg,#1b4965,#62b6cb);color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:bold;font-size:16px">Start Shopping →</a>
           </div>
         </div>
       </div>
@@ -131,7 +130,6 @@ const emailTemplates = {
             </div>
           `).join('')}
           <div style="text-align:center;margin:32px 0">
-            <a href="${process.env.FRONTEND_URL}/order/${order._id}" style="background:linear-gradient(135deg,#1b4965,#62b6cb);color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:bold">Track Your Order →</a>
           </div>
         </div>
       </div>
@@ -150,7 +148,6 @@ const emailTemplates = {
           <h2 style="color:#333">Hi ${user.name}!</h2>
           <p style="color:#555;font-size:16px">Your order <strong>#${order.orderNumber}</strong> is now <strong>${statusMessage}</strong>.</p>
           <div style="text-align:center;margin:32px 0">
-            <a href="${process.env.FRONTEND_URL}/order/${order._id}" style="background:linear-gradient(135deg,#1b4965,#62b6cb);color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:bold">View Order →</a>
           </div>
         </div>
       </div>
@@ -172,7 +169,6 @@ const emailTemplates = {
           </div>
           <p style="color:#555;font-size:14px">Please log in to the admin dashboard to review and manage this request.</p>
           <div style="text-align:center;margin:32px 0">
-            <a href="${process.env.FRONTEND_URL}/admin/orders" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:bold">Go to Admin Dashboard →</a>
           </div>
         </div>
       </div>
@@ -195,7 +191,6 @@ const emailTemplates = {
           </div>
           <p style="color:#555;font-size:14px">Please log in to the admin dashboard to review and approve this refund.</p>
           <div style="text-align:center;margin:32px 0">
-            <a href="${process.env.FRONTEND_URL}/admin/orders" style="background:#ff4d4f;color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:bold">Go to Admin Dashboard →</a>
           </div>
         </div>
       </div>
@@ -218,7 +213,6 @@ const emailTemplates = {
           </div>
           <p style="color:#555;font-size:16px; font-weight: bold;">We have securely attached your updated Order Bill to this email for your records.</p>
           <div style="text-align:center;margin:32px 0">
-            <a href="${process.env.FRONTEND_URL}/order/${order._id}" style="background:linear-gradient(135deg,#1b4965,#62b6cb);color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:bold">View Your Order →</a>
           </div>
         </div>
       </div>
