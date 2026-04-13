@@ -34,7 +34,7 @@ export default function GlobalPageLoader() {
       clearTimeout(initialDelay);
       clearInterval(pollInterval);
     };
-  }, [location.pathname]); // Only trigger on path change, not query params
+  }, []); // Only trigger on initial load or refresh, not on route changes
 
   if (!isLoading) return null;
 
