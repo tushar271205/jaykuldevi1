@@ -6,6 +6,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import ProductCard from '../../components/product/ProductCard';
 import { getProducts } from '../../api/products';
+import Pagination from '../../components/common/Pagination';
 import { IconStar, IconStarOutline, IconTag, IconCreditCard, IconZap, IconRuler, IconShoppingBag, IconTruck, IconRefresh, IconShield, IconChevronLeft, IconChevronRight } from '../../components/common/Icons';
 
 export default function ProductDetailPage() {
@@ -536,15 +537,12 @@ export default function ProductDetailPage() {
               )}
 
               {/* Review Pagination */}
-              {reviewPagination.pages > 1 && (
-                <div className="pagination" style={{ paddingTop: '24px', justifyContent: 'center' }}>
-                  <button className="page-btn" onClick={() => handleReviewPageChange(Math.max(1, reviewPage - 1))} disabled={reviewPage === 1}>←</button>
-                  {Array.from({ length: reviewPagination.pages }, (_, i) => (
-                    <button key={i + 1} className={`page-btn${reviewPage === i + 1 ? ' active' : ''}`} onClick={() => handleReviewPageChange(i + 1)}>{i + 1}</button>
-                  ))}
-                  <button className="page-btn" onClick={() => handleReviewPageChange(Math.min(reviewPagination.pages, reviewPage + 1))} disabled={reviewPage === reviewPagination.pages}>→</button>
-                </div>
-              )}
+              <Pagination 
+                page={reviewPage} 
+                pages={reviewPagination.pages} 
+                onPageChange={handleReviewPageChange} 
+                style={{ paddingTop: '24px', justifyContent: 'center' }} 
+              />
             </div>
           )}
         </div>

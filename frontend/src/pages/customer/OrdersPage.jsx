@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyOrders, downloadBill } from '../../api/orders';
 import toast from 'react-hot-toast';
+import Pagination from '../../components/common/Pagination';
 import { IconCheck, IconSettings, IconTruck, IconPackage, IconParty, IconX, IconRefresh, IconClock } from '../../components/common/Icons';
 
 const STATUS_LABELS = { pending:'Pending', confirmed:'Confirmed', processing:'Processing', shipped:'Shipped', out_for_delivery:'Out for Delivery', delivered:'Delivered', cancelled:'Cancelled', returned:'Returned' };
@@ -168,15 +169,7 @@ export default function OrdersPage() {
           ))}
 
           {/* Pagination */}
-          {pagination.pages > 1 && (
-            <div className="pagination">
-              <button className="page-btn" onClick={() => setPage((p) => Math.max(1, p-1))} disabled={page===1}>←</button>
-              {Array.from({ length: pagination.pages }, (_, i) => (
-                <button key={i+1} className={`page-btn${page===i+1?' active':''}`} onClick={() => setPage(i+1)}>{i+1}</button>
-              ))}
-              <button className="page-btn" onClick={() => setPage((p) => Math.min(pagination.pages, p+1))} disabled={page===pagination.pages}>→</button>
-            </div>
-          )}
+          <Pagination page={page} pages={pagination.pages} onPageChange={setPage} />
         </div>
       )}
     </div>

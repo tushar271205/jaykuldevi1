@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useParams, Link } from 'react-router-dom';
 import { getProducts } from '../../api/products';
 import ProductCard from '../../components/product/ProductCard';
+import Pagination from '../../components/common/Pagination';
 import { IconBoy, IconGirl, IconShoppingBag, IconSearch } from '../../components/common/Icons';
 
 const SUBCATEGORIES = {
@@ -378,37 +379,7 @@ export default function ProductsPage({ category: propCategory }) {
               </div>
 
               {/* Pagination */}
-              {pagination.pages > 1 && (
-                <div className="pagination">
-                  <button
-                    className="page-btn"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    ←
-                  </button>
-                  {Array.from({ length: Math.min(7, pagination.pages) }, (_, i) => {
-                    let p = i + 1;
-                    if (pagination.pages > 7) {
-                      if (pagination.page <= 4) p = i + 1;
-                      else if (pagination.page >= pagination.pages - 3) p = pagination.pages - 6 + i;
-                      else p = pagination.page - 3 + i;
-                    }
-                    return (
-                      <button key={p} className={`page-btn${page === p ? ' active' : ''}`} onClick={() => setPage(p)}>
-                        {p}
-                      </button>
-                    );
-                  })}
-                  <button
-                    className="page-btn"
-                    onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}
-                    disabled={page === pagination.pages}
-                  >
-                    →
-                  </button>
-                </div>
-              )}
+              <Pagination page={page} pages={pagination.pages} onPageChange={setPage} />
             </>
           )}
         </div>
