@@ -11,6 +11,7 @@ function ScrollToTop() {
 }
 
 // Layouts
+import GlobalPageLoader from './components/common/GlobalPageLoader';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import CartDrawer from './components/cart/CartDrawer';
@@ -69,6 +70,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <GlobalPageLoader />
       <Routes>
       {/* Public Routes */}
       <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />

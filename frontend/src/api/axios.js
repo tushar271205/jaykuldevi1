@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+export const requestTracker = { active: 0 };
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 30000,
@@ -8,10 +10,14 @@ const api = axios.create({
 
 // Request interceptor — attach access token
 api.interceptors.request.use((config) => {
+  requestTracker.active++;
   const token = localStorage.getItem('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
-}, (error) => Promise.reject(error));
+}, (error) => {
+  requestTracker.active = Math.max(0, requestTracker.active - 1);
+  return Promise.reject(error);
+});
 
 // Response interceptor — auto-refresh on TOKEN_EXPIRED
 let isRefreshing = false;
@@ -26,8 +32,12 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    requestTracker.active = Math.max(0, requestTracker.active - 1);
+    return response;
+  },
   async (error) => {
+    requestTracker.active = Math.max(0, requestTracker.active - 1);
     const originalRequest = error.config;
     if (
       error.response?.status === 401 &&
