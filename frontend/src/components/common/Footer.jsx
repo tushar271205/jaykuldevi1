@@ -53,7 +53,7 @@ export default function Footer() {
               ['Boys Collection', '/boys'],
               ['Girls Collection', '/girls'],
               ['New Arrivals', '/products?sort=newest'],
-              ['Top Picks', '/products?isTopPick=true'],
+              ['Top Rated', '/products?sort=rating'],
               ['Budget Buys', '/products?maxPrice=999'],
 
             ].map(([label, href]) => (
