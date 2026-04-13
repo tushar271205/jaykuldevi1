@@ -147,39 +147,42 @@ export default function ProductCard({ product, isWishlist }) {
           <div className="product-brand">{product.brand || 'Jay Kuldevi'}</div>
           <div className="product-name">{product.name}</div>
 
-          {/* Ratings */}
-          {product.numReviews > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
-              <span style={{
-                background: 'var(--success)',
-                color: 'white',
-                fontSize: 10,
-                fontWeight: 700,
-                padding: '1px 5px',
-                borderRadius: 3,
-                display: 'flex', alignItems: 'center', gap: 2
-              }}>
-                {product.ratings?.toFixed(1)} <IconStar size={10} color="white" style={{ display: 'inline', verticalAlign: 'middle' }} />
-              </span>
-              <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>({product.numReviews})</span>
-            </div>
-          )}
+          {/* Wrap ratings, price, and stock info to push them all to the bottom uniformly */}
+          <div style={{ marginTop: 'auto' }}>
+            {/* Ratings */}
+            {product.numReviews > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
+                <span style={{
+                  background: 'var(--success)',
+                  color: 'white',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: '1px 5px',
+                  borderRadius: 3,
+                  display: 'flex', alignItems: 'center', gap: 2
+                }}>
+                  {product.ratings?.toFixed(1)} <IconStar size={10} color="white" style={{ display: 'inline', verticalAlign: 'middle' }} />
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>({product.numReviews})</span>
+              </div>
+            )}
 
-          <div className="product-price-wrap">
-            <span className="product-price">₹{product.discountedPrice?.toLocaleString('en-IN')}</span>
-            {discountPct > 0 && (
-              <>
-                <span className="product-mrp">₹{product.price?.toLocaleString('en-IN')}</span>
-                <span className="product-discount-pct">({discountPct}% OFF)</span>
-              </>
+            <div className="product-price-wrap">
+              <span className="product-price">₹{product.discountedPrice?.toLocaleString('en-IN')}</span>
+              {discountPct > 0 && (
+                <>
+                  <span className="product-mrp">₹{product.price?.toLocaleString('en-IN')}</span>
+                  <span className="product-discount-pct">({discountPct}% OFF)</span>
+                </>
+              )}
+            </div>
+
+            {inStockSizes.length === 0 && !isWishlist && (
+              <div style={{ fontSize: 11, color: 'var(--error)', fontWeight: 600, marginTop: 4 }}>
+                Out of Stock
+              </div>
             )}
           </div>
-
-          {inStockSizes.length === 0 && !isWishlist && (
-            <div style={{ fontSize: 11, color: 'var(--error)', fontWeight: 600, marginTop: 4 }}>
-              Out of Stock
-            </div>
-          )}
         </div>
       </Link>
 
