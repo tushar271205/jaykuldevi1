@@ -117,7 +117,7 @@ export default function ContactUsPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24 }}>
               {/* Phone */}
               <a
-                href="tel:+919825XXXXXX"
+                href="tel:+919033111238"
                 style={{
                   display: 'flex', alignItems: 'center', gap: 16,
                   background: 'var(--gray-50)', borderRadius: 16, padding: '20px 24px',
@@ -211,11 +211,11 @@ export default function ContactUsPage() {
                 </div>
                 <div>
                   <div style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', marginBottom: 6 }}>
-                    ઘન્શ્યામ Ladies Tailor — Jay Kuldevi Children Wear
+                    Jay Kuldevi Children Wear
                   </div>
                   <div style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.7 }}>
-                    Shop no:–21, Gigev Park, Opposite Uttamnagar,<br />
-                    Ratanpark Road, Bapunagar, Ahmedabad, Gujarat.
+                    Shop no:–3,khodiyar nagar , Rajeshwari road<br />
+                    Lakshman nagar, Surat, Gujarat.
                   </div>
                 </div>
               </div>
@@ -418,8 +418,8 @@ export default function ContactUsPage() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
-                  ['Monday – Saturday', '10:00 AM – 8:00 PM'],
-                  ['Sunday', '11:00 AM – 6:00 PM'],
+                  ['Monday – Saturday', '9:00 AM – 9:00 PM'],
+                  ['Sunday', '9:00 AM – 10:00 PM'],
                 ].map(([day, time]) => (
                   <div key={day} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #F3F4F6' }}>
                     <span style={{ fontSize: 14, color: '#374151', fontWeight: 500 }}>{day}</span>
