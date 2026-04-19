@@ -462,34 +462,40 @@ export default function HomePage() {
       </section>
 
       {/* ========== BOYS COLLECTION ========== */}
-      {boysProducts.length > 0 && (
-        <section style={{ padding: '40px 0', background: 'linear-gradient(180deg, #f0f5ff 0%, white 100%)' }}>
-          <div className="container">
-            <div className="section-header">
-              <h2 className="section-title"><IconBoy size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Boys Collection</h2>
-              <Link to="/boys" className="section-link">Shop All Boys →</Link>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
-              {boysProducts.map((p) => <ProductCard key={p._id} product={p} />)}
-            </div>
+      <section style={{ padding: '40px 0', background: 'linear-gradient(180deg, #f0f5ff 0%, white 100%)' }}>
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title"><IconBoy size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Boys Collection</h2>
+            <Link to="/boys" className="section-link">Shop All Boys →</Link>
           </div>
-        </section>
-      )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
+            {loading
+              ? renderSkeletons(6)
+              : boysProducts.length > 0
+                ? boysProducts.map((p) => <ProductCard key={p._id} product={p} />)
+                : null
+            }
+          </div>
+        </div>
+      </section>
 
       {/* ========== GIRLS COLLECTION ========== */}
-      {girlsProducts.length > 0 && (
-        <section style={{ padding: '40px 0', background: 'linear-gradient(180deg, #fff0f7 0%, white 100%)' }}>
-          <div className="container">
-            <div className="section-header">
-              <h2 className="section-title"><IconGirl size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Girls Collection</h2>
-              <Link to="/girls" className="section-link">Shop All Girls →</Link>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
-              {girlsProducts.map((p) => <ProductCard key={p._id} product={p} />)}
-            </div>
+      <section style={{ padding: '40px 0', background: 'linear-gradient(180deg, #fff0f7 0%, white 100%)' }}>
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title"><IconGirl size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6 }} /> Girls Collection</h2>
+            <Link to="/girls" className="section-link">Shop All Girls →</Link>
           </div>
-        </section>
-      )}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 16 }}>
+            {loading
+              ? renderSkeletons(6)
+              : girlsProducts.length > 0
+                ? girlsProducts.map((p) => <ProductCard key={p._id} product={p} />)
+                : null
+            }
+          </div>
+        </div>
+      </section>
 
       {/* ========== BOTTOM SECTION — OFFERS & CONTACT ========== */}
       <section style={{ padding: '60px 0', background: 'white' }}>

@@ -91,7 +91,23 @@ export default function AdminUsers() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} style={{ textAlign: 'center', padding: 48, color: 'var(--gray-400)' }}>Loading users...</td></tr>
+                Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div className="skeleton" style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+                        <div>
+                          <div className="skeleton" style={{ height: 13, width: 110, borderRadius: 6, marginBottom: 6 }} />
+                          <div className="skeleton" style={{ height: 10, width: 150, borderRadius: 6 }} />
+                        </div>
+                      </div>
+                    </td>
+                    <td><div className="skeleton" style={{ height: 20, width: 60, borderRadius: 12 }} /></td>
+                    <td><div className="skeleton" style={{ height: 13, width: 80, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 13, width: 70, borderRadius: 6 }} /></td>
+                    <td><div style={{ display: 'flex', gap: 8 }}><div className="skeleton" style={{ height: 28, width: 90, borderRadius: 6 }} /><div className="skeleton" style={{ height: 28, width: 52, borderRadius: 6 }} /></div></td>
+                  </tr>
+                ))
               ) : users.length === 0 ? (
                 <tr><td colSpan={5} style={{ textAlign: 'center', padding: 48, color: 'var(--gray-400)' }}>No users found</td></tr>
               ) : users.map((user) => (

@@ -486,7 +486,26 @@ export default function AdminProducts() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>Loading...</td></tr>
+                Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div className="skeleton" style={{ width: 44, height: 54, borderRadius: 6, flexShrink: 0 }} />
+                        <div>
+                          <div className="skeleton" style={{ height: 13, width: 140, borderRadius: 6, marginBottom: 6 }} />
+                          <div className="skeleton" style={{ height: 10, width: 80, borderRadius: 6 }} />
+                        </div>
+                      </div>
+                    </td>
+                    <td><div className="skeleton" style={{ height: 20, width: 55, borderRadius: 12 }} /></td>
+                    <td><div className="skeleton" style={{ height: 14, width: 50, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 20, width: 70, borderRadius: 12 }} /></td>
+                    <td><div className="skeleton" style={{ height: 12, width: 90, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 20, width: 50, borderRadius: 4 }} /></td>
+                    <td><div className="skeleton" style={{ height: 20, width: 60, borderRadius: 12 }} /></td>
+                    <td><div style={{ display: 'flex', gap: 6 }}><div className="skeleton" style={{ height: 28, width: 36, borderRadius: 6 }} /><div className="skeleton" style={{ height: 28, width: 60, borderRadius: 6 }} /><div className="skeleton" style={{ height: 28, width: 48, borderRadius: 6 }} /></div></td>
+                  </tr>
+                ))
               ) : products.length === 0 ? (
                 <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>No products found. Add your first product!</td></tr>
               ) : products.map((p) => (

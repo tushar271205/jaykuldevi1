@@ -146,7 +146,18 @@ export default function AdminOrders() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>Loading...</td></tr>
+                Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i}>
+                    <td><div className="skeleton" style={{ height: 14, width: 80, borderRadius: 6 }} /><div className="skeleton" style={{ height: 10, width: 50, borderRadius: 6, marginTop: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 14, width: 100, borderRadius: 6 }} /><div className="skeleton" style={{ height: 10, width: 130, borderRadius: 6, marginTop: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 14, width: 60, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 14, width: 60, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 14, width: 40, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 22, width: 80, borderRadius: 12 }} /></td>
+                    <td><div className="skeleton" style={{ height: 14, width: 70, borderRadius: 6 }} /></td>
+                    <td><div className="skeleton" style={{ height: 28, width: 90, borderRadius: 6 }} /></td>
+                  </tr>
+                ))
               ) : orders.length === 0 ? (
                 <tr><td colSpan={8} style={{ textAlign: 'center', padding: 40, color: 'var(--gray-400)' }}>No orders found</td></tr>
               ) : orders.map((order) => (

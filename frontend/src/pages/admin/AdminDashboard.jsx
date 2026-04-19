@@ -47,8 +47,38 @@ export default function AdminDashboard() {
   }, []);
 
   if (loading) return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-      {[1,2,3,4].map((i) => <div key={i} className="skeleton" style={{ height: 120, borderRadius: 16 }} />)}
+    <div>
+      {/* Header skeleton */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
+        <div>
+          <div className="skeleton" style={{ height: 28, width: 140, borderRadius: 8, marginBottom: 8 }} />
+          <div className="skeleton" style={{ height: 13, width: 200, borderRadius: 6 }} />
+        </div>
+        <div className="skeleton" style={{ height: 38, width: 120, borderRadius: 8 }} />
+      </div>
+      {/* Stat cards skeleton */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+        {[1,2,3,4].map((i) => <div key={i} className="skeleton" style={{ height: 120, borderRadius: 16 }} />)}
+      </div>
+      {/* Orders table skeleton */}
+      <div style={{ background: 'white', borderRadius: 16, border: '1px solid var(--gray-100)', overflow: 'hidden' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--gray-100)', display: 'flex', justifyContent: 'space-between' }}>
+          <div className="skeleton" style={{ height: 18, width: 120, borderRadius: 6 }} />
+          <div className="skeleton" style={{ height: 14, width: 60, borderRadius: 6 }} />
+        </div>
+        <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {[1,2,3,4,5].map((i) => (
+            <div key={i} style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+              <div className="skeleton" style={{ height: 13, width: 80, borderRadius: 6, flex: '0 0 80px' }} />
+              <div className="skeleton" style={{ height: 13, width: 120, borderRadius: 6, flex: 1 }} />
+              <div className="skeleton" style={{ height: 13, width: 40, borderRadius: 6, flex: '0 0 40px' }} />
+              <div className="skeleton" style={{ height: 13, width: 60, borderRadius: 6, flex: '0 0 60px' }} />
+              <div className="skeleton" style={{ height: 22, width: 70, borderRadius: 12, flex: '0 0 70px' }} />
+              <div className="skeleton" style={{ height: 13, width: 70, borderRadius: 6, flex: '0 0 70px' }} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
