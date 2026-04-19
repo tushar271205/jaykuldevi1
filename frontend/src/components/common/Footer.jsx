@@ -102,6 +102,7 @@ export default function Footer() {
             </h4>
             {[
               ['About Jay Kuldevi', '/about'],
+              ['Contact Us', '/contact'],
               ['Privacy Policy', '/privacy'],
             ].map(([label, href]) => (
               <Link key={label} to={href} style={{

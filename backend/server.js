@@ -71,6 +71,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/coupons', require('./routes/couponRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'OK', service: 'Jay Kuldevi API', timestamp: new Date().toISOString() }));

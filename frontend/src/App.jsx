@@ -30,6 +30,7 @@ import ProfilePage from './pages/customer/ProfilePage';
 import ReviewPage from './pages/customer/ReviewPage';
 import AboutUsPage from './pages/customer/AboutUsPage';
 import PrivacyPolicyPage from './pages/customer/PrivacyPolicyPage';
+import ContactUsPage from './pages/customer/ContactUsPage';
 
 // Admin Pages
 import AdminLayout from './pages/admin/AdminLayout';
@@ -82,6 +83,7 @@ function App() {
       <Route path="/register" element={<AuthPage />} />
       <Route path="/about" element={<PublicLayout><AboutUsPage /></PublicLayout>} />
       <Route path="/privacy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
+      <Route path="/contact" element={<PublicLayout><ContactUsPage /></PublicLayout>} />
 
       {/* Protected Customer Routes */}
       <Route path="/checkout" element={
