@@ -135,7 +135,7 @@ export default function ContactUsPage() {
                 </div>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--primary)', marginBottom: 4 }}>Call Us</div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#1F2937' }}>+91 98254 XXXXX</div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: '#1F2937' }}>+91 90331 11238</div>
                   <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }}>Mon–Sat, 10am – 8pm</div>
                 </div>
               </a>
@@ -189,7 +189,7 @@ export default function ContactUsPage() {
             }}>
               <iframe
                 title="Jay Kuldevi Shop Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3671.2345678901234!2d72.5700!3d23.0800!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDA0JzUwLjQiTiA3MsKwMzQnMTIuMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin&q=Shop+no+21,+Gigev+Park,+Opposite+Uttamnagar,+Ratanpark+Road,+Bapunagar,+Ahmedabad,+Gujarat"
+                src="https://maps.google.com/maps?q=Khodiyar+Nagar,+Rajeshwari+Road,+Lakshman+Nagar,+Surat,+Gujarat,+India&output=embed"
                 width="100%"
                 height="280"
                 style={{ border: 0, display: 'block' }}
@@ -395,7 +395,7 @@ export default function ContactUsPage() {
                     transition: 'opacity 0.2s, transform 0.2s',
                     letterSpacing: '0.02em',
                   }}
-                  onMouseEnter={(e) => { if (status !== 'loading') { e.currentTarget.style.opacity = '0.92'; e.currentTarget.style.transform = 'translateY(-1px)'; }}}
+                  onMouseEnter={(e) => { if (status !== 'loading') { e.currentTarget.style.opacity = '0.92'; e.currentTarget.style.transform = 'translateY(-1px)'; } }}
                   onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
                   <IconSend size={18} color="white" />
@@ -414,7 +414,7 @@ export default function ContactUsPage() {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <span style={{ color: 'var(--primary)' }}><IconUsers size={24} /></span>
-                <h3 style={{ margin: 0 }}>Business Hours</h3>
+                <h3 style={{ margin: 0 }}>Shop Timing</h3>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[

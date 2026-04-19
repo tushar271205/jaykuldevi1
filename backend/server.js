@@ -35,7 +35,7 @@ app.use(helmet({
       "style-src": ["'self'", "'unsafe-inline'", "https:", "http:"],
       "font-src": ["'self'", "data:", "https:", "http:"],
       "connect-src": ["'self'", "https:", "http:"],
-      "frame-src": ["'self'", "https://js.stripe.com"],
+      "frame-src": ["'self'", "https://js.stripe.com", "https://www.google.com", "https://maps.google.com", "https://google.com"],
     },
   },
   crossOriginResourcePolicy: { policy: "cross-origin" },
