@@ -9,6 +9,16 @@ const jwt = require('jsonwebtoken');
 // Generate 6-digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
+// Strong password validation
+const validateStrongPassword = (password) => {
+  if (!password || password.length < 8) return 'Password must be at least 8 characters.';
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter (A-Z).';
+  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter (a-z).';
+  if (!/[0-9]/.test(password)) return 'Password must contain at least one number (0-9).';
+  if (!/[^A-Za-z0-9]/.test(password)) return 'Password must contain at least one special character (!@#$%...)';
+  return null; // valid
+};
+
 // @POST /api/auth/send-otp
 exports.sendOTP = async (req, res, next) => {
   try {
@@ -77,6 +87,9 @@ exports.register = async (req, res, next) => {
     if (!tempToken || !name || !password) {
       return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
+
+    const pwError = validateStrongPassword(password);
+    if (pwError) return res.status(400).json({ success: false, message: pwError });
 
     let decoded;
     try {
@@ -238,6 +251,9 @@ exports.resetPassword = async (req, res, next) => {
     if (!token || !password || password.length < 6) {
       return res.status(400).json({ success: false, message: 'Invalid token or password (min 6 chars).' });
     }
+
+    const pwError = validateStrongPassword(password);
+    if (pwError) return res.status(400).json({ success: false, message: pwError });
 
     // Hash the raw token from URL to compare with stored hash
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');

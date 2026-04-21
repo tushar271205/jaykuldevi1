@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { resetPasswordByToken } from '../../api/auth';
 import toast from 'react-hot-toast';
 import { IconWarning, IconEye, IconEyeOff } from '../../components/common/Icons';
+import PasswordStrength, { validatePassword, passwordError } from '../../components/common/PasswordStrength';
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -19,10 +20,8 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError('');
 
-    if (!password || password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
-    }
+    const pwErr = passwordError(password);
+    if (pwErr) { setError(pwErr); return; }
     if (password !== confirm) {
       setError('Passwords do not match.');
       return;
@@ -108,12 +107,17 @@ export default function ResetPasswordPage() {
               )}
 
               <div className="form-group">
-                <label className="form-label">New Password</label>
+                <label className="form-label">
+                  New Password
+                  <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 400, marginLeft: 6 }}>
+                    (8+ chars, upper, lower, number, special)
+                  </span>
+                </label>
                 <div style={{ position: 'relative' }}>
                   <input
                     className="form-input"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Min 6 characters"
+                    placeholder="Min 8 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoFocus
@@ -127,6 +131,7 @@ export default function ResetPasswordPage() {
                     {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                   </button>
                 </div>
+                <PasswordStrength password={password} />
               </div>
 
               <div className="form-group">

@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import * as authApi from '../../api/auth';
 import toast from 'react-hot-toast';
 import { IconShirt, IconCheck, IconHeart, IconPackage, IconGift, IconBoy, IconGirl, IconChild, IconWarning, IconEye, IconEyeOff } from '../../components/common/Icons';
+import PasswordStrength, { validatePassword, passwordError } from '../../components/common/PasswordStrength';
 
 const STEPS = { EMAIL: 'email', OTP: 'otp', DETAILS: 'details', PASSWORD: 'password' };
 
@@ -151,7 +152,8 @@ export default function AuthPage() {
     e.preventDefault();
     const newErrors = {};
     if (!name.trim()) newErrors.name = 'Name is required';
-    if (!password || password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    const pwErr = passwordError(password);
+    if (pwErr) newErrors.password = pwErr;
     if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
 
     setLoading(true);
@@ -484,12 +486,17 @@ export default function AuthPage() {
                 <input className="form-input" type="tel" placeholder="10-digit mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">Password *</label>
+                <label className="form-label">
+                  Password *
+                  <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 400, marginLeft: 6 }}>
+                    (8+ chars, upper, lower, number, special)
+                  </span>
+                </label>
                 <div style={{ position: 'relative' }}>
                   <input
                     className={`form-input${errors.password ? ' error' : ''}`}
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Min 6 characters"
+                    placeholder="Min 8 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     id="password-input"
@@ -500,6 +507,7 @@ export default function AuthPage() {
                   </button>
                 </div>
                 {errors.password && <span className="form-error"><IconWarning size={12} style={{ display: 'inline', verticalAlign: 'middle' }} /> {errors.password}</span>}
+                <PasswordStrength password={password} />
               </div>
               <div className="form-group">
                 <label className="form-label">Gender</label>

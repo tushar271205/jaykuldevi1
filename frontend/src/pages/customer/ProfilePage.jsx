@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { updateProfile, addAddress, deleteAddress } from '../../api/users';
 import toast from 'react-hot-toast';
 import { IconUser, IconMapPin, IconBoy, IconGirl, IconChild, IconPhone, IconEye, IconEyeOff } from '../../components/common/Icons';
+import PasswordStrength, { passwordError } from '../../components/common/PasswordStrength';
 
 // Slide indicator dots
 function SliderDots({ count, active, onChange }) {
@@ -80,10 +81,8 @@ export default function ProfilePage() {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    if (!pwForm.newPassword || pwForm.newPassword.length < 6) {
-      toast.error('New password must be at least 6 characters');
-      return;
-    }
+    const pwErr = passwordError(pwForm.newPassword);
+    if (pwErr) { toast.error(pwErr); return; }
     if (pwForm.newPassword !== pwForm.confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -335,12 +334,17 @@ export default function ProfilePage() {
 
                     {/* New Password */}
                     <div className="form-group">
-                      <label className="form-label">New Password</label>
+                      <label className="form-label">
+                        New Password
+                        <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 400, marginLeft: 6 }}>
+                          (8+ chars, upper, lower, number, special)
+                        </span>
+                      </label>
                       <div style={{ position: 'relative' }}>
                         <input
                           className="form-input"
                           type={showPw.new ? 'text' : 'password'}
-                          placeholder="Min 6 characters"
+                          placeholder="Min 8 characters"
                           value={pwForm.newPassword}
                           onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
                         />
@@ -349,29 +353,7 @@ export default function ProfilePage() {
                           {showPw.new ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                         </button>
                       </div>
-                      {/* Strength indicator */}
-                      {pwForm.newPassword && (
-                        <div style={{ marginTop: 6 }}>
-                          <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
-                            {[1, 2, 3].map((level) => {
-                              const len = pwForm.newPassword.length;
-                              const strength = len < 6 ? 0 : len < 10 ? 1 : len < 14 ? 2 : 3;
-                              return (
-                                <div key={level} style={{
-                                  flex: 1, height: 4, borderRadius: 2,
-                                  background: strength >= level
-                                    ? level === 1 ? '#f87171' : level === 2 ? '#fb923c' : '#4ade80'
-                                    : 'var(--gray-100)',
-                                  transition: 'background 0.3s',
-                                }} />
-                              );
-                            })}
-                          </div>
-                          <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>
-                            {pwForm.newPassword.length < 6 ? 'Too short' : pwForm.newPassword.length < 10 ? 'Weak' : pwForm.newPassword.length < 14 ? 'Good' : 'Strong'}
-                          </span>
-                        </div>
-                      )}
+                      <PasswordStrength password={pwForm.newPassword} />
                     </div>
 
                     {/* Confirm Password */}

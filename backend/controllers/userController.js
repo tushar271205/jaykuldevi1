@@ -1,5 +1,15 @@
 const User = require('../models/User');
 
+// Strong password validation (must match frontend rules)
+const validateStrongPassword = (password) => {
+  if (!password || password.length < 8) return 'Password must be at least 8 characters.';
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter (A-Z).';
+  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter (a-z).';
+  if (!/[0-9]/.test(password)) return 'Password must contain at least one number (0-9).';
+  if (!/[^A-Za-z0-9]/.test(password)) return 'Password must contain at least one special character (!@#$%...)';
+  return null;
+};
+
 // @GET /api/users/profile
 exports.getProfile = async (req, res) => {
   const user = await User.findById(req.user._id).populate('wishlist');
@@ -18,7 +28,8 @@ exports.updateProfile = async (req, res, next) => {
     if (gender !== undefined) user.gender = gender;
 
     if (password) {
-      if (password.length < 6) return res.status(400).json({ success: false, message: 'Password must be at least 6 characters.' });
+      const pwError = validateStrongPassword(password);
+      if (pwError) return res.status(400).json({ success: false, message: pwError });
       // Require current password verification when changing password
       if (!currentPassword) return res.status(400).json({ success: false, message: 'Current password is required to set a new password.' });
       const isMatch = await user.comparePassword(currentPassword);
