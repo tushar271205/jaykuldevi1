@@ -8,6 +8,140 @@ import toast from 'react-hot-toast';
 import StripeContainer from '../../components/payment/StripeContainer';
 import { IconCreditCard, IconMoney, IconPhone, IconParty } from '../../components/common/Icons';
 
+// Full-screen order status overlay
+function OrderStatusOverlay({ state }) {
+  if (!state) return null;
+  const isProcessing = state === 'processing';
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 999999,
+      background: 'rgba(10, 20, 40, 0.92)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      backdropFilter: 'blur(6px)',
+      animation: 'fadeIn 0.3s ease',
+    }}>
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes scaleIn { from { transform: scale(0.7); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+        @keyframes spin360 { to { transform: rotate(360deg) } }
+        @keyframes checkDraw {
+          from { stroke-dashoffset: 100 }
+          to { stroke-dashoffset: 0 }
+        }
+        @keyframes pulseRing {
+          0% { transform: scale(1); opacity: 0.6 }
+          100% { transform: scale(1.6); opacity: 0 }
+        }
+        @keyframes confettiFall {
+          0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+      `}</style>
+
+      <div style={{
+        background: 'white',
+        borderRadius: 24,
+        padding: '56px 40px',
+        textAlign: 'center',
+        maxWidth: 400,
+        width: '90%',
+        boxShadow: '0 32px 80px rgba(0,0,0,0.5)',
+        animation: 'scaleIn 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {isProcessing ? (
+          <>
+            {/* Spinning ring */}
+            <div style={{ position: 'relative', width: 80, height: 80, margin: '0 auto 24px' }}>
+              <div style={{
+                position: 'absolute', inset: 0,
+                border: '4px solid #e2e8f0',
+                borderRadius: '50%',
+              }} />
+              <div style={{
+                position: 'absolute', inset: 0,
+                border: '4px solid transparent',
+                borderTopColor: '#1b4965',
+                borderRadius: '50%',
+                animation: 'spin360 0.9s linear infinite',
+              }} />
+              <div style={{
+                position: 'absolute', inset: '16px',
+                background: 'var(--primary-50, #e8f4f8)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 20,
+              }}>💳</div>
+            </div>
+            <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1b4965', marginBottom: 10 }}>
+              Payment in Process
+            </h2>
+            <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.6 }}>
+              Please wait while we securely process your payment.<br />
+              <strong>Do not close or refresh this page.</strong>
+            </p>
+            {/* animated dots */}
+            <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 6 }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{
+                  width: 8, height: 8, borderRadius: '50%', background: '#1b4965',
+                  animation: `pulseRing 1.2s ${i * 0.2}s ease-in-out infinite`,
+                }} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Success checkmark */}
+            <div style={{ position: 'relative', width: 88, height: 88, margin: '0 auto 24px' }}>
+              <div style={{
+                position: 'absolute', inset: 0,
+                borderRadius: '50%',
+                background: '#d1fae5',
+                animation: 'pulseRing 1.8s ease-out infinite',
+              }} />
+              <div style={{
+                position: 'absolute', inset: 0,
+                borderRadius: '50%',
+                background: '#10b981',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <path
+                    d="M10 20 L17 27 L30 13"
+                    stroke="white"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="100"
+                    strokeDashoffset="0"
+                    style={{ animation: 'checkDraw 0.5s 0.1s ease forwards' }}
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 style={{ fontSize: 24, fontWeight: 900, color: '#065f46', marginBottom: 10 }}>
+              Order Confirmed! 🎉
+            </h2>
+            <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.6, marginBottom: 20 }}>
+              Your order has been placed successfully.<br />
+              Redirecting to your orders...
+            </p>
+            <div style={{
+              background: '#f0fdf4', border: '1px solid #bbf7d0',
+              borderRadius: 10, padding: '10px 16px',
+              fontSize: 13, color: '#065f46', fontWeight: 600,
+            }}>
+              ✦ We'll keep you updated via email
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const PAYMENT_METHODS = [
   { id: 'stripe', label: 'Online Payment', sub: 'Debit/Credit Card, Net Banking', icon: <IconCreditCard size={18} /> },
   { id: 'cod', label: 'Cash on Delivery', sub: 'Pay when you receive', icon: <IconMoney size={18} /> },
@@ -26,6 +160,7 @@ export default function CheckoutPage() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState('');
   const [loading, setLoading] = useState(false);
+  const [orderOverlay, setOrderOverlay] = useState(null); // null | 'processing' | 'confirmed'
   const [addressForm, setAddressForm] = useState({
     fullName: user?.name || '', mobile: user?.mobile || '',
     addressLine1: '', addressLine2: '', city: '', state: '', pincode: '',
@@ -100,10 +235,12 @@ export default function CheckoutPage() {
         shippingAddress: selectedAddress,
         couponCode: couponApplied,
       };
-      const res = await placeCODOrder(payload);
+      await placeCODOrder(payload);
       clearCart();
       await refetchUser();
-      navigate(`/order-success/${res.data.order._id}`);
+      // Show confirmed overlay directly for COD, then redirect
+      setOrderOverlay('confirmed');
+      setTimeout(() => navigate('/account/orders'), 2500);
     } catch (err) {
       console.error('COD placement error:', err);
       toast.error(err.response?.data?.message || err.message || 'Failed to place order');
@@ -404,12 +541,21 @@ export default function CheckoutPage() {
           amount={stripeIntent.amount}
           onCancel={() => setStripeIntent(null)}
           onSuccess={async () => {
+            setStripeIntent(null);
+            setOrderOverlay('processing');
             clearCart();
             await refetchUser();
-            navigate(`/order-success/${stripeIntent.orderId}`);
+            // Show processing briefly, then confirmed
+            setTimeout(() => {
+              setOrderOverlay('confirmed');
+              setTimeout(() => navigate('/account/orders'), 2500);
+            }, 1800);
           }}
         />
       )}
+
+      {/* Order Status Overlay */}
+      <OrderStatusOverlay state={orderOverlay} />
     </div>
   );
 }
