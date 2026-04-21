@@ -169,12 +169,13 @@ export default function CheckoutPage() {
   const [stripeIntent, setStripeIntent] = useState(null); // { clientSecret, orderId, amount }
 
   useEffect(() => {
-    if (cartItems.length === 0) navigate('/');
+    // Don't redirect to homepage if order overlay is active (we'll redirect to /account/orders instead)
+    if (cartItems.length === 0 && !orderOverlay) navigate('/');
     if (user?.addresses?.length > 0) {
       const def = user.addresses.find((a) => a.isDefault) || user.addresses[0];
       setSelectedAddress(def);
     }
-  }, [user]);
+  }, [user, cartItems, orderOverlay]);
 
   const finalAmount = cartSubtotal - couponDiscount + shippingCharge;
 
