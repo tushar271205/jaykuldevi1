@@ -1,43 +1,100 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { updateProfile, addAddress, deleteAddress } from '../../api/users';
 import toast from 'react-hot-toast';
-import { IconUser, IconMapPin, IconBoy, IconGirl, IconChild, IconPhone } from '../../components/common/Icons';
+import { IconUser, IconMapPin, IconBoy, IconGirl, IconChild, IconPhone, IconEye, IconEyeOff } from '../../components/common/Icons';
+
+// Slide indicator dots
+function SliderDots({ count, active, onChange }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 20 }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <button
+          key={i}
+          onClick={() => onChange(i)}
+          style={{
+            width: active === i ? 28 : 8,
+            height: 8,
+            borderRadius: 4,
+            background: active === i ? 'var(--primary)' : 'var(--gray-200)',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+            transition: 'all 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function ProfilePage() {
   const { user, updateUser, refetchUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
+  const [slideIndex, setSlideIndex] = useState(0); // 0 = Personal Info, 1 = Change Password
   const [loading, setLoading] = useState(false);
+
+  // Personal info form
   const [form, setForm] = useState({
     name: user?.name || '',
     mobile: user?.mobile || '',
     gender: user?.gender || '',
-    password: '',
+  });
+
+  // Change password form
+  const [pwForm, setPwForm] = useState({
+    currentPassword: '',
+    newPassword: '',
     confirmPassword: '',
   });
+  const [showPw, setShowPw] = useState({ current: false, new: false, confirm: false });
+
+  // Address form
   const [addressForm, setAddressForm] = useState({
     label: 'Home', fullName: '', mobile: '', addressLine1: '', addressLine2: '', city: '', state: '', pincode: '',
   });
   const [showAddressForm, setShowAddressForm] = useState(false);
 
+  const sliderRef = useRef(null);
+
+  const goToSlide = (index) => {
+    setSlideIndex(index);
+    if (sliderRef.current) {
+      sliderRef.current.scrollTo({ left: index * sliderRef.current.offsetWidth, behavior: 'smooth' });
+    }
+  };
+
   const handleProfileSave = async (e) => {
     e.preventDefault();
-    if (form.password && form.password !== form.confirmPassword) {
+    setLoading(true);
+    try {
+      const res = await updateProfile({ name: form.name, mobile: form.mobile, gender: form.gender });
+      updateUser(res.data.user);
+      toast.success('Profile updated!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Update failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (!pwForm.newPassword || pwForm.newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters');
+      return;
+    }
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-    
     setLoading(true);
     try {
-      const payload = { name: form.name, mobile: form.mobile, gender: form.gender };
-      if (form.password) payload.password = form.password;
-
-      const res = await updateProfile(payload);
-      updateUser(res.data.user);
-      toast.success('Profile updated!');
-      setForm(p => ({ ...p, password: '', confirmPassword: '' })); // clear password fields
+      await updateProfile({ currentPassword: pwForm.currentPassword, password: pwForm.newPassword });
+      toast.success('Password changed successfully!');
+      setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Update failed');
+      toast.error(err.response?.data?.message || 'Failed to change password');
     } finally {
       setLoading(false);
     }
@@ -69,20 +126,28 @@ export default function ProfilePage() {
     }
   };
 
+  const SLIDE_TABS = [
+    { label: 'Personal Info', icon: '👤' },
+    { label: 'Change Password', icon: '🔐' },
+  ];
+
   return (
     <div className="container" style={{ paddingTop: 24, paddingBottom: 48, maxWidth: 900 }}>
       <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>My Account</h1>
 
       <div className="resp-grid-profile" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 24 }}>
+
         {/* Sidebar */}
         <div className="card" style={{ height: 'fit-content', position: 'sticky', top: 90 }}>
           {/* Avatar */}
           <div style={{ padding: '24px 20px', textAlign: 'center', borderBottom: '1px solid var(--gray-100)' }}>
             <div style={{
               width: 72, height: 72, borderRadius: '50%',
-              background: 'var(--primary)', color: 'white',
+              background: 'linear-gradient(135deg, var(--primary), var(--primary-dark, #0d3347))',
+              color: 'white',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 28, fontWeight: 700, margin: '0 auto 12px',
+              boxShadow: '0 4px 16px rgba(27,73,101,0.3)',
             }}>
               {user?.name?.[0]?.toUpperCase() || '?'}
             </div>
@@ -103,7 +168,7 @@ export default function ProfilePage() {
                   border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500,
                   color: activeTab === item.key ? 'var(--primary)' : 'var(--gray-700)',
                   borderLeft: `3px solid ${activeTab === item.key ? 'var(--primary)' : 'transparent'}`,
-                  textAlign: 'left',
+                  textAlign: 'left', transition: 'all 0.2s',
                 }}
               >
                 <span>{item.icon}</span> {item.label}
@@ -114,69 +179,246 @@ export default function ProfilePage() {
 
         {/* Content */}
         <div>
+          {/* ── Profile Tab with Slider ── */}
           {activeTab === 'profile' && (
-            <div className="card">
-              <div className="card-header">
-                <h2 style={{ fontSize: 16, fontWeight: 700 }}>Personal Information</h2>
+            <div className="card" style={{ overflow: 'hidden' }}>
+              {/* Slider tab bar */}
+              <div style={{
+                display: 'flex',
+                borderBottom: '1px solid var(--gray-100)',
+                background: 'var(--gray-50)',
+              }}>
+                {SLIDE_TABS.map((tab, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goToSlide(i)}
+                    style={{
+                      flex: 1,
+                      padding: '14px 12px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: 13,
+                      fontWeight: slideIndex === i ? 700 : 500,
+                      color: slideIndex === i ? 'var(--primary)' : 'var(--gray-500)',
+                      background: 'transparent',
+                      borderBottom: `2.5px solid ${slideIndex === i ? 'var(--primary)' : 'transparent'}`,
+                      transition: 'all 0.25s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <span style={{ fontSize: 15 }}>{tab.icon}</span>
+                    {tab.label}
+                  </button>
+                ))}
               </div>
-              <div className="card-body">
-                <form onSubmit={handleProfileSave} className="resp-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label">Email Address</label>
-                    <input className="form-input" value={user?.email || ''} disabled style={{ background: 'var(--gray-50)', color: 'var(--gray-400)' }} />
-                    <span className="form-hint">Email cannot be changed</span>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Full Name</label>
-                    <input className="form-input" value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Your name" />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Mobile Number</label>
-                    <input className="form-input" type="tel" value={form.mobile} onChange={(e) => setForm((p) => ({ ...p, mobile: e.target.value }))} placeholder="10-digit mobile" />
-                  </div>
-                  <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                    <label className="form-label">Gender</label>
-                    <div style={{ display: 'flex', gap: 10 }}>
-                      {['male', 'female', 'other'].map((g) => (
-                        <label key={g} style={{
-                          display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px',
-                          border: `1.5px solid ${form.gender === g ? 'var(--primary)' : 'var(--gray-200)'}`,
-                          borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500,
-                          background: form.gender === g ? 'var(--primary-50)' : 'white',
-                          color: form.gender === g ? 'var(--primary)' : 'var(--gray-600)',
-                          textTransform: 'capitalize',
-                        }}>
-                          <input type="radio" style={{ display: 'none' }} checked={form.gender === g} onChange={() => setForm((p) => ({ ...p, gender: g }))} />
-                          {g === 'male' ? <IconBoy size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> : g === 'female' ? <IconGirl size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> : <IconChild size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />} {g}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
 
-                  <div style={{ gridColumn: '1 / -1', marginTop: 12, borderTop: '1px solid var(--gray-100)', paddingTop: 16 }}>
-                    <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>Change Password</h3>
+              {/* Slides container — CSS scroll-snap */}
+              <div
+                ref={sliderRef}
+                style={{
+                  display: 'flex',
+                  overflowX: 'hidden',
+                  scrollSnapType: 'x mandatory',
+                  scrollBehavior: 'smooth',
+                }}
+              >
+                {/* ── SLIDE 1: Personal Information ── */}
+                <div style={{
+                  minWidth: '100%',
+                  scrollSnapAlign: 'start',
+                  padding: '28px 24px',
+                }}>
+                  <form onSubmit={handleProfileSave} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    <div className="form-group">
+                      <label className="form-label">Email Address</label>
+                      <input
+                        className="form-input"
+                        value={user?.email || ''}
+                        disabled
+                        style={{ background: 'var(--gray-50)', color: 'var(--gray-400)' }}
+                      />
+                      <span className="form-hint">Email cannot be changed</span>
+                    </div>
+
                     <div className="resp-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                       <div className="form-group">
-                        <label className="form-label">New Password</label>
-                        <input className="form-input" type="password" value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder="Leave blank to keep current" />
+                        <label className="form-label">Full Name</label>
+                        <input
+                          className="form-input"
+                          value={form.name}
+                          onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                          placeholder="Your name"
+                        />
                       </div>
                       <div className="form-group">
-                        <label className="form-label">Confirm New Password</label>
-                        <input className="form-input" type="password" value={form.confirmPassword} onChange={(e) => setForm((p) => ({ ...p, confirmPassword: e.target.value }))} placeholder="Confirm new password" />
+                        <label className="form-label">Mobile Number</label>
+                        <input
+                          className="form-input"
+                          type="tel"
+                          value={form.mobile}
+                          onChange={(e) => setForm((p) => ({ ...p, mobile: e.target.value }))}
+                          placeholder="10-digit mobile"
+                        />
                       </div>
                     </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Gender</label>
+                      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                        {['male', 'female', 'other'].map((g) => (
+                          <label key={g} style={{
+                            display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px',
+                            border: `1.5px solid ${form.gender === g ? 'var(--primary)' : 'var(--gray-200)'}`,
+                            borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500,
+                            background: form.gender === g ? 'var(--primary-50)' : 'white',
+                            color: form.gender === g ? 'var(--primary)' : 'var(--gray-600)',
+                            textTransform: 'capitalize', transition: 'all 0.2s',
+                          }}>
+                            <input type="radio" style={{ display: 'none' }} checked={form.gender === g} onChange={() => setForm((p) => ({ ...p, gender: g }))} />
+                            {g === 'male' ? <IconBoy size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
+                              : g === 'female' ? <IconGirl size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />
+                              : <IconChild size={14} style={{ display: 'inline', verticalAlign: 'middle' }} />} {g}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <button
+                        type="submit"
+                        className={`btn btn-primary${loading ? ' btn-loading' : ''}`}
+                        disabled={loading}
+                      >
+                        {loading ? 'Saving...' : 'Save Changes'}
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* Slide dots */}
+                  <SliderDots count={2} active={slideIndex} onChange={goToSlide} />
+                </div>
+
+                {/* ── SLIDE 2: Change Password ── */}
+                <div style={{
+                  minWidth: '100%',
+                  scrollSnapAlign: 'start',
+                  padding: '28px 24px',
+                }}>
+                  <div style={{ marginBottom: 20 }}>
+                    <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Change Your Password</h3>
+                    <p style={{ fontSize: 13, color: 'var(--gray-400)', lineHeight: 1.6 }}>
+                      Enter your current password and choose a new one. Min 6 characters.
+                    </p>
                   </div>
 
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <button type="submit" className={`btn btn-primary${loading ? ' btn-loading' : ''}`} disabled={loading}>
-                      {loading ? 'Saving...' : 'Save Changes'}
-                    </button>
-                  </div>
-                </form>
+                  <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                    {/* Current Password */}
+                    <div className="form-group">
+                      <label className="form-label">Current Password</label>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          className="form-input"
+                          type={showPw.current ? 'text' : 'password'}
+                          placeholder="Enter current password"
+                          value={pwForm.currentPassword}
+                          onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
+                        />
+                        <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)' }}
+                          onClick={() => setShowPw((p) => ({ ...p, current: !p.current }))}>
+                          {showPw.current ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* New Password */}
+                    <div className="form-group">
+                      <label className="form-label">New Password</label>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          className="form-input"
+                          type={showPw.new ? 'text' : 'password'}
+                          placeholder="Min 6 characters"
+                          value={pwForm.newPassword}
+                          onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
+                        />
+                        <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)' }}
+                          onClick={() => setShowPw((p) => ({ ...p, new: !p.new }))}>
+                          {showPw.new ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                        </button>
+                      </div>
+                      {/* Strength indicator */}
+                      {pwForm.newPassword && (
+                        <div style={{ marginTop: 6 }}>
+                          <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                            {[1, 2, 3].map((level) => {
+                              const len = pwForm.newPassword.length;
+                              const strength = len < 6 ? 0 : len < 10 ? 1 : len < 14 ? 2 : 3;
+                              return (
+                                <div key={level} style={{
+                                  flex: 1, height: 4, borderRadius: 2,
+                                  background: strength >= level
+                                    ? level === 1 ? '#f87171' : level === 2 ? '#fb923c' : '#4ade80'
+                                    : 'var(--gray-100)',
+                                  transition: 'background 0.3s',
+                                }} />
+                              );
+                            })}
+                          </div>
+                          <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>
+                            {pwForm.newPassword.length < 6 ? 'Too short' : pwForm.newPassword.length < 10 ? 'Weak' : pwForm.newPassword.length < 14 ? 'Good' : 'Strong'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div className="form-group">
+                      <label className="form-label">Confirm New Password</label>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          className="form-input"
+                          type={showPw.confirm ? 'text' : 'password'}
+                          placeholder="Re-enter new password"
+                          value={pwForm.confirmPassword}
+                          onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
+                          style={{
+                            borderColor: pwForm.confirmPassword
+                              ? pwForm.confirmPassword === pwForm.newPassword ? '#4ade80' : '#f87171'
+                              : undefined,
+                          }}
+                        />
+                        <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)' }}
+                          onClick={() => setShowPw((p) => ({ ...p, confirm: !p.confirm }))}>
+                          {showPw.confirm ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                        </button>
+                      </div>
+                      {pwForm.confirmPassword && pwForm.confirmPassword !== pwForm.newPassword && (
+                        <span style={{ fontSize: 12, color: '#f87171', marginTop: 4, display: 'block' }}>Passwords do not match</span>
+                      )}
+                    </div>
+
+                    <div>
+                      <button
+                        type="submit"
+                        className={`btn btn-primary${loading ? ' btn-loading' : ''}`}
+                        disabled={loading || !pwForm.newPassword || !pwForm.confirmPassword}
+                      >
+                        {loading ? 'Updating...' : 'Update Password'}
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* Slide dots */}
+                  <SliderDots count={2} active={slideIndex} onChange={goToSlide} />
+                </div>
               </div>
             </div>
           )}
 
+          {/* ── Addresses Tab ── */}
           {activeTab === 'addresses' && (
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -239,8 +481,10 @@ export default function ProfilePage() {
                             <IconPhone size={12} style={{ display: 'inline', verticalAlign: 'middle' }} /> {addr.mobile}
                           </div>
                         </div>
-                        <button style={{ fontSize: 12, color: 'var(--error)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, flexShrink: 0 }}
-                          onClick={() => handleDeleteAddress(addr._id)}>
+                        <button
+                          style={{ fontSize: 12, color: 'var(--error)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, flexShrink: 0 }}
+                          onClick={() => handleDeleteAddress(addr._id)}
+                        >
                           DELETE
                         </button>
                       </div>

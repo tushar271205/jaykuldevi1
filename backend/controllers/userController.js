@@ -9,20 +9,25 @@ exports.getProfile = async (req, res) => {
 // @PUT /api/users/profile
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, mobile, gender, password } = req.body;
-    const user = await User.findById(req.user._id);
+    const { name, mobile, gender, password, currentPassword } = req.body;
+    const user = await User.findById(req.user._id).select('+password');
     if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
 
     if (name !== undefined) user.name = name;
     if (mobile !== undefined) user.mobile = mobile;
     if (gender !== undefined) user.gender = gender;
+
     if (password) {
       if (password.length < 6) return res.status(400).json({ success: false, message: 'Password must be at least 6 characters.' });
+      // Require current password verification when changing password
+      if (!currentPassword) return res.status(400).json({ success: false, message: 'Current password is required to set a new password.' });
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is incorrect.' });
       user.password = password;
     }
 
     await user.save();
-    
+
     // Don't send password back
     const userObj = user.toObject();
     delete userObj.password;
@@ -30,6 +35,7 @@ exports.updateProfile = async (req, res, next) => {
     res.json({ success: true, message: 'Profile updated.', user: userObj });
   } catch (error) { next(error); }
 };
+
 
 // @POST /api/users/wishlist/:productId
 exports.toggleWishlist = async (req, res, next) => {
