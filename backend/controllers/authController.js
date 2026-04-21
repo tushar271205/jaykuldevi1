@@ -215,7 +215,8 @@ exports.forgotPassword = async (req, res, next) => {
     user.passwordResetExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
     await user.save({ validateBeforeSave: false });
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    // Use the request's origin to build the correct URL (works on both local & production)
+    const frontendUrl = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetUrl = `${frontendUrl}/reset-password/${rawToken}`;
 
     const { subject, html } = emailTemplates.passwordReset(user.name || 'there', resetUrl);
