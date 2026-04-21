@@ -5,7 +5,7 @@ import * as authApi from '../../api/auth';
 import toast from 'react-hot-toast';
 import { IconShirt, IconCheck, IconHeart, IconPackage, IconGift, IconBoy, IconGirl, IconChild, IconWarning, IconEye, IconEyeOff } from '../../components/common/Icons';
 
-const STEPS = { EMAIL: 'email', OTP: 'otp', DETAILS: 'details', PASSWORD: 'password', RESET_PASSWORD: 'reset_password' };
+const STEPS = { EMAIL: 'email', OTP: 'otp', DETAILS: 'details', PASSWORD: 'password' };
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -27,6 +27,7 @@ export default function AuthPage() {
   const [otpTimer, setOtpTimer] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [forgotSent, setForgotSent] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) navigate(location.state?.from || '/');
@@ -44,6 +45,7 @@ export default function AuthPage() {
     setStep(STEPS.EMAIL);
     setOtp(['', '', '', '', '', '']);
     setErrors({});
+    setForgotSent(false);
   }, [isRegister]);
 
   const handleSendOTP = async (e) => {
@@ -55,20 +57,39 @@ export default function AuthPage() {
     setLoading(true);
     setErrors({});
     try {
-      const purpose = mode === 'forgot-password' ? 'reset-password' : mode;
+      const purpose = mode === 'register' ? 'register' : mode;
       await authApi.sendOTP(email, purpose);
       setStep(STEPS.OTP);
       setOtpTimer(60);
       toast.success(`OTP sent to ${email}`);
     } catch (err) {
       const msg = err.response?.data?.message || 'Failed to send OTP';
-      if ((mode === 'login' || mode === 'forgot-password') && err.response?.status === 404) {
+      if (mode === 'login' && err.response?.status === 404) {
         toast.error('No account found. Please register first.');
         setMode('register');
         navigate('/register');
       } else {
         setErrors({ email: msg });
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErrors({ email: 'Please enter a valid email' });
+      return;
+    }
+    setLoading(true);
+    setErrors({});
+    try {
+      await authApi.forgotPassword(email);
+      setForgotSent(true);
+      toast.success('Reset link sent! Check your inbox.');
+    } catch (err) {
+      setErrors({ email: err.response?.data?.message || 'Failed to send reset link' });
     } finally {
       setLoading(false);
     }
@@ -105,13 +126,11 @@ export default function AuthPage() {
     setLoading(true);
     setErrors({});
     try {
-      const purpose = mode === 'forgot-password' ? 'reset-password' : mode;
+      const purpose = mode === 'register' ? 'register' : mode;
       const res = await authApi.verifyOTP(email, otpStr, purpose);
       setTempToken(res.data.tempToken);
       if (mode === 'register') {
         setStep(STEPS.DETAILS);
-      } else if (mode === 'forgot-password') {
-        setStep(STEPS.RESET_PASSWORD);
       } else {
         setStep(STEPS.PASSWORD);
       }
@@ -120,7 +139,6 @@ export default function AuthPage() {
       const msg = err.response?.data?.message || 'Invalid OTP. Please check and try again.';
       console.error('OTP verify error:', err.response?.status, msg);
       setErrors({ otp: msg });
-      // Reset OTP fields so user can retype
       setOtp(['', '', '', '', '', '']);
       document.getElementById('otp-0')?.focus();
     } finally {
@@ -165,20 +183,8 @@ export default function AuthPage() {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    if (!password || password.length < 6) { setErrors({ password: 'Password must be at least 6 characters' }); return; }
-    setLoading(true);
-    try {
-      await authApi.resetPassword({ tempToken, password });
-      toast.success('Password reset successfully. You can now login.');
-      setMode('login');
-      setStep(STEPS.PASSWORD);
-      setPassword('');
-      setErrors({});
-    } catch (err) {
-      setErrors({ password: err.response?.data?.message || 'Failed to reset password' });
-    } finally {
-      setLoading(false);
-    }
+    // This is no longer used - reset is now done on the dedicated ResetPasswordPage
+    // Kept for safety but should never be called
   };
 
   return (
@@ -265,6 +271,7 @@ export default function AuthPage() {
                   setErrors({});
                   setOtp(['', '', '', '', '', '']);
                   setPassword('');
+                  setForgotSent(false);
                 }}
               >
                 {mode === 'forgot-password' ? 'Login' : mode === 'login' ? 'Register' : 'Login'}
@@ -272,21 +279,87 @@ export default function AuthPage() {
             </p>
           </div>
 
-          {/* Progress Indicator */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
-            {[STEPS.EMAIL, STEPS.OTP, mode === 'register' ? STEPS.DETAILS : mode === 'forgot-password' ? STEPS.RESET_PASSWORD : STEPS.PASSWORD].map((s, i) => (
-              <div key={s} style={{
-                width: step === s ? 24 : 8, height: 8,
-                borderRadius: 4,
-                background: [STEPS.EMAIL, STEPS.OTP, STEPS.DETAILS, STEPS.PASSWORD, STEPS.RESET_PASSWORD].indexOf(step) >= i
-                  ? 'var(--primary)' : 'var(--gray-200)',
-                transition: 'all 0.3s',
-              }} />
-            ))}
-          </div>
+          {/* Progress Indicator — only for register/login flows */}
+          {mode !== 'forgot-password' && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
+              {[STEPS.EMAIL, STEPS.OTP, mode === 'register' ? STEPS.DETAILS : STEPS.PASSWORD].map((s, i) => (
+                <div key={s} style={{
+                  width: step === s ? 24 : 8, height: 8,
+                  borderRadius: 4,
+                  background: [STEPS.EMAIL, STEPS.OTP, STEPS.DETAILS, STEPS.PASSWORD].indexOf(step) >= i
+                    ? 'var(--primary)' : 'var(--gray-200)',
+                  transition: 'all 0.3s',
+                }} />
+              ))}
+            </div>
+          )}
 
-          {/* STEP 1: Email */}
-          {step === STEPS.EMAIL && (
+          {/* STEP 1: Email (for login/register) OR Forgot Password Form */}
+          {mode === 'forgot-password' ? (
+            forgotSent ? (
+              // ── Success state ──
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: 72, height: 72, borderRadius: '50%', background: '#d1fae5',
+                  margin: '0 auto 20px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32,
+                }}>📬</div>
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#065f46', marginBottom: 10 }}>Check Your Email!</h2>
+                <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.7, marginBottom: 24 }}>
+                  We've sent a password reset link to<br />
+                  <strong>{email}</strong><br />
+                  The link is valid for <strong>30 minutes</strong>.
+                </p>
+                <p style={{ fontSize: 12, color: 'var(--gray-400)', marginBottom: 20 }}>
+                  Didn't receive it? Check your spam folder or{' '}
+                  <button
+                    style={{ color: 'var(--primary)', fontWeight: 700, cursor: 'pointer', background: 'none', border: 'none', fontSize: 12 }}
+                    onClick={() => { setForgotSent(false); setErrors({}); }}
+                  >
+                    try again
+                  </button>.
+                </p>
+                <button
+                  className="btn btn-outline btn-full"
+                  onClick={() => { setMode('login'); setForgotSent(false); setErrors({}); }}
+                >
+                  ← Back to Login
+                </button>
+              </div>
+            ) : (
+              // ── Email input state ──
+              <form onSubmit={handleForgotPassword} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <p style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 4, lineHeight: 1.6 }}>
+                  Enter your registered email. We'll send you a secure link to reset your password.
+                </p>
+                <div className="form-group">
+                  <label className="form-label">Email Address</label>
+                  <input
+                    className={`form-input${errors.email ? ' error' : ''}`}
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoFocus
+                    id="forgot-email-input"
+                  />
+                  {errors.email && <span className="form-error"><IconWarning size={12} style={{ display: 'inline', verticalAlign: 'middle' }} /> {errors.email}</span>}
+                </div>
+                <button
+                  type="submit"
+                  className={`btn btn-primary btn-full btn-lg${loading ? ' btn-loading' : ''}`}
+                  disabled={loading}
+                  id="send-reset-link-btn"
+                >
+                  {loading ? 'Sending...' : 'SEND RESET LINK →'}
+                </button>
+                <button type="button" className="btn btn-ghost btn-sm" style={{ color: 'var(--gray-400)' }}
+                  onClick={() => { setMode('login'); setErrors({}); }}>
+                  ← Back to Login
+                </button>
+              </form>
+            )
+          ) : step === STEPS.EMAIL && (
             <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div className="form-group">
                 <label className="form-label">Email Address</label>
@@ -493,38 +566,7 @@ export default function AuthPage() {
             </form>
           )}
 
-          {/* STEP 3c: Reset Password */}
-          {step === STEPS.RESET_PASSWORD && (
-            <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ textAlign: 'center', marginBottom: 8 }}>
-                <p style={{ fontSize: 14, color: 'var(--gray-600)' }}>
-                  Set a new password for <strong>{email}</strong>
-                </p>
-              </div>
-              <div className="form-group">
-                <label className="form-label">New Password</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    className={`form-input${errors.password ? ' error' : ''}`}
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Min 6 characters"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    autoFocus
-                    id="reset-password-input"
-                  />
-                  <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--gray-400)', fontSize: 14 }}
-                    onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-                  </button>
-                </div>
-                {errors.password && <span className="form-error"><IconWarning size={12} style={{ display: 'inline', verticalAlign: 'middle' }} /> {errors.password}</span>}
-              </div>
-              <button type="submit" className={`btn btn-primary btn-full btn-lg${loading ? ' btn-loading' : ''}`} disabled={loading} id="reset-btn">
-                {loading ? 'Resetting...' : 'RESET PASSWORD →'}
-              </button>
-            </form>
-          )}
+
         </div>
       </div>
     </div>

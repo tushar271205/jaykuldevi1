@@ -31,6 +31,7 @@ import ReviewPage from './pages/customer/ReviewPage';
 import AboutUsPage from './pages/customer/AboutUsPage';
 import PrivacyPolicyPage from './pages/customer/PrivacyPolicyPage';
 import ContactUsPage from './pages/customer/ContactUsPage';
+import ResetPasswordPage from './pages/customer/ResetPasswordPage';
 
 // Admin Pages
 import AdminLayout from './pages/admin/AdminLayout';
@@ -84,6 +85,7 @@ function App() {
       <Route path="/about" element={<PublicLayout><AboutUsPage /></PublicLayout>} />
       <Route path="/privacy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
       <Route path="/contact" element={<PublicLayout><ContactUsPage /></PublicLayout>} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
       {/* Protected Customer Routes */}
       <Route path="/checkout" element={

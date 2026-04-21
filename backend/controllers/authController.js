@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const User = require('../models/User');
 const OTP = require('../models/OTP');
 const { generateAccessToken, generateRefreshToken } = require('../middleware/auth');
@@ -192,29 +193,66 @@ exports.getMe = async (req, res) => {
   res.json({ success: true, user });
 };
 
-// @POST /api/auth/reset-password
+// @POST /api/auth/forgot-password
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email is required.' });
+
+    const user = await User.findOne({ email: email.toLowerCase(), isVerified: true })
+      .select('+passwordResetToken +passwordResetExpires');
+
+    // Always return success to prevent email enumeration
+    if (!user) {
+      return res.json({ success: true, message: 'If an account exists, a reset link has been sent.' });
+    }
+
+    // Generate a secure random token
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    user.passwordResetToken = hashedToken;
+    user.passwordResetExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+    await user.save({ validateBeforeSave: false });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${frontendUrl}/reset-password/${rawToken}`;
+
+    const { subject, html } = emailTemplates.passwordReset(user.name || 'there', resetUrl);
+    await sendEmail({ to: email, subject, html });
+
+    res.json({ success: true, message: 'Password reset link sent to your email. Valid for 30 minutes.' });
+  } catch (error) {
+    console.error('[ForgotPassword] Error:', error.message);
+    next(error);
+  }
+};
+
+// @POST /api/auth/reset-password/:token
 exports.resetPassword = async (req, res, next) => {
   try {
-    const { tempToken, password } = req.body;
-    if (!tempToken || !password || password.length < 6) {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!token || !password || password.length < 6) {
       return res.status(400).json({ success: false, message: 'Invalid token or password (min 6 chars).' });
     }
 
-    let decoded;
-    try {
-      decoded = jwt.verify(tempToken, process.env.JWT_ACCESS_SECRET);
-    } catch {
-      return res.status(401).json({ success: false, message: 'Session expired. Please request a new OTP.' });
-    }
+    // Hash the raw token from URL to compare with stored hash
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    if (!decoded.verified || decoded.purpose !== 'reset-password') {
-      return res.status(401).json({ success: false, message: 'Invalid session.' });
-    }
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },
+    }).select('+passwordResetToken +passwordResetExpires');
 
-    const user = await User.findOne({ email: decoded.email });
-    if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Reset link is invalid or has expired. Please request a new one.' });
+    }
 
     user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
     await user.save();
 
     res.json({ success: true, message: 'Password reset successfully. You can now login.' });

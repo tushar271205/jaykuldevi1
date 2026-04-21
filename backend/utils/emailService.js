@@ -238,7 +238,40 @@ const emailTemplates = {
       </div>
     `,
   }),
+
+  passwordReset: (name, resetUrl) => ({
+    subject: `🔐 Reset Your Jay Kuldevi Password`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1)">
+        <div style="background:linear-gradient(135deg,#1b4965,#62b6cb);padding:40px;text-align:center">
+          <h1 style="color:#fff;margin:0;font-size:28px">👕 Jay Kuldevi</h1>
+          <p style="color:rgba(255,255,255,0.9);margin:8px 0 0">Password Reset Request</p>
+        </div>
+        <div style="padding:40px;text-align:center">
+          <h2 style="color:#333;margin:0 0 16px">Hi ${name}! 👋</h2>
+          <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 32px">
+            We received a request to reset your password. Click the button below to choose a new password. This link is valid for <strong>30 minutes</strong>.
+          </p>
+          <a href="${resetUrl}" style="display:inline-block;background:linear-gradient(135deg,#1b4965,#62b6cb);color:#fff;text-decoration:none;padding:16px 40px;border-radius:50px;font-size:16px;font-weight:700;letter-spacing:0.5px;box-shadow:0 4px 15px rgba(27,73,101,0.4)">
+            🔐 Reset My Password
+          </a>
+          <p style="color:#888;font-size:13px;margin:32px 0 0">
+            Or copy and paste this link in your browser:<br/>
+            <a href="${resetUrl}" style="color:#1b4965;word-break:break-all">${resetUrl}</a>
+          </p>
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px;margin:24px 0;text-align:left">
+            <p style="margin:0;color:#856404;font-size:14px">⚠️ <strong>Security Notice:</strong> If you did not request a password reset, you can safely ignore this email. Your password will not be changed.</p>
+          </div>
+          <p style="color:#aaa;font-size:12px">This link expires in 30 minutes for your security.</p>
+        </div>
+        <div style="background:#f8f8f8;padding:20px;text-align:center">
+          <p style="color:#aaa;font-size:12px;margin:0">© 2026 Jay Kuldevi. All rights reserved.</p>
+        </div>
+      </div>
+    `,
+  }),
 };
+
 
 const getStatusEmailContent = (status, order, user) => {
   const statusMap = {

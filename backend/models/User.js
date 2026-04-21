@@ -27,6 +27,8 @@ const userSchema = new mongoose.Schema(
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
     refreshToken: { type: String, select: false },
     hasPlacedFirstOrder: { type: Boolean, default: false },
+    passwordResetToken: { type: String, select: false },
+    passwordResetExpires: { type: Date, select: false },
   },
   { timestamps: true }
 );
