@@ -74,83 +74,83 @@ function App() {
       <ScrollToTop />
       <GlobalPageLoader />
       <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
-      <Route path="/boys" element={<PublicLayout><ProductsPage category="boys" /></PublicLayout>} />
-      <Route path="/girls" element={<PublicLayout><ProductsPage category="girls" /></PublicLayout>} />
-      <Route path="/products" element={<PublicLayout><ProductsPage /></PublicLayout>} />
-      <Route path="/product/:id" element={<PublicLayout><ProductDetailPage /></PublicLayout>} />
-      <Route path="/login" element={<AuthPage />} />
-      <Route path="/register" element={<AuthPage />} />
-      <Route path="/about" element={<PublicLayout><AboutUsPage /></PublicLayout>} />
-      <Route path="/privacy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
-      <Route path="/contact" element={<PublicLayout><ContactUsPage /></PublicLayout>} />
-      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        {/* Public Routes */}
+        <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+        <Route path="/boys" element={<PublicLayout><ProductsPage category="boys" /></PublicLayout>} />
+        <Route path="/girls" element={<PublicLayout><ProductsPage category="girls" /></PublicLayout>} />
+        <Route path="/products" element={<PublicLayout><ProductsPage /></PublicLayout>} />
+        <Route path="/product/:id" element={<PublicLayout><ProductDetailPage /></PublicLayout>} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/register" element={<AuthPage />} />
+        <Route path="/about" element={<PublicLayout><AboutUsPage /></PublicLayout>} />
+        <Route path="/privacy" element={<PublicLayout><PrivacyPolicyPage /></PublicLayout>} />
+        <Route path="/contact" element={<PublicLayout><ContactUsPage /></PublicLayout>} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-      {/* Protected Customer Routes */}
-      <Route path="/checkout" element={
-        <ProtectedRoute>
-          <PublicLayout showFooter={false}><CheckoutPage /></PublicLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/order-success/:orderId" element={
-        <ProtectedRoute>
-          <PublicLayout><OrderSuccessPage /></PublicLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/order/:id" element={
-        <ProtectedRoute>
-          <PublicLayout><OrderDetailPage /></PublicLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/account/orders" element={
-        <ProtectedRoute>
-          <PublicLayout><OrdersPage /></PublicLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/account/profile" element={
-        <ProtectedRoute>
-          <PublicLayout><ProfilePage /></PublicLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/wishlist" element={
-        <ProtectedRoute>
-          <PublicLayout><WishlistPage /></PublicLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/review/:orderId/:productId" element={
-        <ProtectedRoute>
-          <PublicLayout><ReviewPage /></PublicLayout>
-        </ProtectedRoute>
-      } />
+        {/* Protected Customer Routes */}
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <PublicLayout showFooter={false}><CheckoutPage /></PublicLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/order-success/:orderId" element={
+          <ProtectedRoute>
+            <PublicLayout><OrderSuccessPage /></PublicLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/order/:id" element={
+          <ProtectedRoute>
+            <PublicLayout><OrderDetailPage /></PublicLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/account/orders" element={
+          <ProtectedRoute>
+            <PublicLayout><OrdersPage /></PublicLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/account/profile" element={
+          <ProtectedRoute>
+            <PublicLayout><ProfilePage /></PublicLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/wishlist" element={
+          <ProtectedRoute>
+            <PublicLayout><WishlistPage /></PublicLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/review/:orderId/:productId" element={
+          <ProtectedRoute>
+            <PublicLayout><ReviewPage /></PublicLayout>
+          </ProtectedRoute>
+        } />
 
-      {/* Admin Routes */}
-      <Route path="/admin" element={
-        <ProtectedRoute adminOnly>
-          <AdminLayout />
-        </ProtectedRoute>
-      }>
-        <Route index element={<Navigate to="/admin/dashboard" replace />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="products" element={<AdminProducts />} />
-        <Route path="orders" element={<AdminOrders />} />
-        <Route path="revenue" element={<AdminRevenue />} />
-        <Route path="coupons" element={<AdminCoupons />} />
-        <Route path="users" element={<AdminUsers />} />
-      </Route>
+        {/* Admin Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute adminOnly>
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="revenue" element={<AdminRevenue />} />
+          <Route path="coupons" element={<AdminCoupons />} />
+          <Route path="users" element={<AdminUsers />} />
+        </Route>
 
-      {/* 404 */}
-      <Route path="*" element={
-        <PublicLayout>
-          <div className="empty-state" style={{ minHeight: '60vh' }}>
-            <div className="empty-state-icon">🔍</div>
-            <h1 className="empty-state-title">Page Not Found</h1>
-            <p className="empty-state-text">The page you're looking for doesn't exist.</p>
-            <a href="/" className="btn btn-primary mt-4">Go Home</a>
-          </div>
-        </PublicLayout>
-      } />
-    </Routes>
+        {/* 404 */}
+        <Route path="*" element={
+          <PublicLayout>
+            <div className="empty-state" style={{ minHeight: '60vh' }}>
+              <div className="empty-state-icon">🔍</div>
+              <h1 className="empty-state-title">Page Not Found</h1>
+              <p className="empty-state-text">The page you're looking for doesn't exist.</p>
+              <a href="/" className="btn btn-primary mt-4">Go Home</a>
+            </div>
+          </PublicLayout>
+        } />
+      </Routes>
     </>
   );
 }

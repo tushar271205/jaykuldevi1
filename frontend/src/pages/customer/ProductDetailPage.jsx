@@ -27,6 +27,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   const [addingToCart, setAddingToCart] = useState(false);
+  const [showSizeChart, setShowSizeChart] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -353,7 +354,17 @@ export default function ProductDetailPage() {
                 textTransform: 'uppercase', marginBottom: 8,
               }}>
                 <span>SELECT SIZE</span>
-                <span style={{ color: 'var(--primary)', cursor: 'pointer' }}><IconRuler size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> SIZE CHART</span>
+                <button
+                  onClick={() => setShowSizeChart(true)}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--primary)', fontWeight: 700, fontSize: 12,
+                    display: 'flex', alignItems: 'center', gap: 4, padding: 0,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  <IconRuler size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> Size Chart
+                </button>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {product.sizes?.map((s) => (
@@ -556,6 +567,141 @@ export default function ProductDetailPage() {
           </div>
           <div className="product-grid">
             {related.map((p) => <ProductCard key={p._id} product={p} />)}
+          </div>
+        </div>
+      )}
+      {/* ========== SIZE CHART MODAL ========== */}
+      {showSizeChart && (
+        <div
+          onClick={() => setShowSizeChart(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)',
+            zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 16,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'white', borderRadius: 20, width: '100%', maxWidth: 680,
+              maxHeight: '88vh', overflow: 'hidden', display: 'flex', flexDirection: 'column',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.25)',
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{
+              background: 'linear-gradient(135deg, var(--primary), #4a90a4)',
+              padding: '18px 24px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              flexShrink: 0,
+            }}>
+              <div style={{ color: 'white' }}>
+                <div style={{ fontSize: 17, fontWeight: 800 }}>📏 Size Chart</div>
+                <div style={{ fontSize: 12, opacity: 0.85, marginTop: 2 }}>Jay Kuldevi Kids' Apparel — Age 0 to 14 years</div>
+              </div>
+              <button
+                onClick={() => setShowSizeChart(false)}
+                style={{
+                  background: 'rgba(255,255,255,0.18)', border: 'none', borderRadius: 8,
+                  color: 'white', padding: '6px 14px', cursor: 'pointer',
+                  fontSize: 13, fontWeight: 700,
+                }}
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            {/* Tip Banner */}
+            <div style={{
+              background: '#fffbeb', borderBottom: '1px solid #fde68a',
+              padding: '10px 20px', fontSize: 12, color: '#92400e', flexShrink: 0,
+            }}>
+              💡 <strong>Tip:</strong> If between two sizes, go bigger — kids grow fast. Heights are in cm, weights in kg.
+            </div>
+
+            {/* Table */}
+            <div style={{ overflowY: 'auto', padding: '16px 20px' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: 'var(--gray-50)', position: 'sticky', top: 0 }}>
+                    {['Size Label', 'Age', 'Height (cm)', 'Weight (kg)', 'Chest (cm)', 'Waist (cm)'].map((h) => (
+                      <th key={h} style={{
+                        padding: '10px 12px', textAlign: 'left',
+                        fontWeight: 700, color: 'var(--gray-600)',
+                        fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.04em',
+                        borderBottom: '2px solid var(--gray-100)',
+                        whiteSpace: 'nowrap',
+                      }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: '0–3 M',   age: '0–3 months',  h: '44–56',   w: '2–5.5',   chest: 40, waist: 40 },
+                    { label: '3–6 M',   age: '3–6 months',  h: '56–63',   w: '5.5–7',   chest: 44, waist: 44 },
+                    { label: '6–9 M',   age: '6–9 months',  h: '63–68',   w: '7–8.5',   chest: 46, waist: 46 },
+                    { label: '9–12 M',  age: '9–12 months', h: '68–74',   w: '8.5–10',  chest: 48, waist: 47 },
+                    { label: '12–18 M', age: '12–18 months',h: '74–81',   w: '10–11.5', chest: 50, waist: 49 },
+                    { label: '18–24 M', age: '18–24 months',h: '81–88',   w: '11.5–13', chest: 52, waist: 51 },
+                    { label: '2–3 Y',   age: '2–3 years',   h: '88–98',   w: '13–15',   chest: 54, waist: 53 },
+                    { label: '3–4 Y',   age: '3–4 years',   h: '98–104',  w: '15–17',   chest: 56, waist: 54 },
+                    { label: '4–5 Y',   age: '4–5 years',   h: '104–111', w: '17–19',   chest: 58, waist: 55 },
+                    { label: '5–6 Y',   age: '5–6 years',   h: '111–117', w: '19–22',   chest: 60, waist: 56 },
+                    { label: '6–7 Y',   age: '6–7 years',   h: '117–122', w: '22–25',   chest: 63, waist: 57 },
+                    { label: '7–8 Y',   age: '7–8 years',   h: '122–128', w: '25–28',   chest: 66, waist: 59 },
+                    { label: '8–9 Y',   age: '8–9 years',   h: '128–134', w: '28–31',   chest: 69, waist: 61 },
+                    { label: '9–10 Y',  age: '9–10 years',  h: '134–140', w: '31–35',   chest: 72, waist: 63 },
+                    { label: '10–11 Y', age: '10–11 years', h: '140–145', w: '35–39',   chest: 75, waist: 65 },
+                    { label: '11–12 Y', age: '11–12 years', h: '145–151', w: '39–43',   chest: 78, waist: 67 },
+                    { label: '12–13 Y', age: '12–13 years', h: '151–157', w: '43–48',   chest: 81, waist: 69 },
+                    { label: '13–14 Y', age: '13–14 years', h: '157–163', w: '48–54',   chest: 84, waist: 71 },
+                  ].map((row, i) => {
+                    // Highlight rows matching the product's available sizes
+                    const productSizeLabels = (product.sizes || []).map((s) => s.size);
+                    const isMatch = productSizeLabels.some((ps) =>
+                      row.label.toLowerCase().includes(ps.toLowerCase()) ||
+                      ps.toLowerCase().includes(row.label.split(' ')[0].toLowerCase())
+                    );
+                    return (
+                      <tr
+                        key={row.label}
+                        style={{
+                          background: isMatch
+                            ? 'var(--primary-50)'
+                            : i % 2 === 0 ? 'white' : 'var(--gray-50)',
+                          borderBottom: '1px solid var(--gray-100)',
+                        }}
+                      >
+                        <td style={{ padding: '9px 12px', fontWeight: 700, color: isMatch ? 'var(--primary)' : 'var(--gray-700)' }}>
+                          {row.label}
+                          {isMatch && (
+                            <span style={{
+                              marginLeft: 6, fontSize: 10, background: 'var(--primary)',
+                              color: 'white', borderRadius: 3, padding: '1px 5px', fontWeight: 700,
+                            }}>AVAILABLE</span>
+                          )}
+                        </td>
+                        <td style={{ padding: '9px 12px', color: 'var(--gray-600)' }}>{row.age}</td>
+                        <td style={{ padding: '9px 12px', color: 'var(--gray-600)' }}>{row.h}</td>
+                        <td style={{ padding: '9px 12px', color: 'var(--gray-600)' }}>{row.w}</td>
+                        <td style={{ padding: '9px 12px', color: 'var(--gray-600)' }}>~{row.chest}</td>
+                        <td style={{ padding: '9px 12px', color: 'var(--gray-600)' }}>~{row.waist}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{
+              padding: '12px 20px', borderTop: '1px solid var(--gray-100)',
+              background: 'var(--gray-50)', flexShrink: 0,
+            }}>
+              <span style={{ fontSize: 12, color: 'var(--gray-400)' }}>
+                Sizes highlighted in blue are available for this product.
+              </span>
+            </div>
           </div>
         </div>
       )}
