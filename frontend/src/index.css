@@ -2225,9 +2225,62 @@ h4 {
     grid-template-columns: 1fr !important;
   }
 
-  /* --- Profile page sidebar card no sticky --- */
-  .resp-grid-profile > .card {
+  /* ============================================
+     PROFILE PAGE — FULL RESPONSIVE
+     ============================================ */
+
+  /* Sidebar loses its card styling and becomes a horizontal tab strip */
+  .profile-sidebar {
     position: static !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+
+  /* Hide the avatar/name/email block — saves vertical real-estate on mobile */
+  .profile-avatar-section {
+    display: none !important;
+  }
+
+  /* Nav list: vertical → horizontal scrollable row */
+  .profile-nav-list {
+    display: flex !important;
+    padding: 0 !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .profile-nav-list::-webkit-scrollbar { display: none; }
+
+  /* Individual nav items stretch equally and lose their left-border style */
+  .profile-nav-btn {
+    flex: 1 !important;
+    padding: 12px 8px !important;
+    border-left: none !important;
+    border-bottom: 3px solid transparent !important;
+    font-size: 13px !important;
+    justify-content: center !important;
+    white-space: nowrap;
+  }
+  .profile-nav-btn.active {
+    border-left: none !important;
+    border-bottom: 3px solid var(--primary) !important;
+  }
+
+  /* Slide panels: reduce padding on mobile */
+  .profile-slide-panel {
+    padding: 20px 16px !important;
+  }
+
+  /* Address header: prevent overflow on small screens */
+  .profile-addr-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* "My Account" title — compact on mobile */
+  .profile-page-title {
+    font-size: 20px !important;
+    margin-bottom: 16px !important;
   }
 
   /* --- Order detail: title + buttons stack --- */
@@ -2276,6 +2329,31 @@ h4 {
     height: 44px !important;
     font-size: 20px !important;
     border-radius: 8px !important;
+  }
+
+  /* --- Profile: ultra-compact slide padding on small phones --- */
+  .profile-slide-panel {
+    padding: 16px 12px !important;
+  }
+
+  /* --- Profile: gap between profile-grid items --- */
+  .resp-grid-profile {
+    gap: 10px !important;
+  }
+
+  /* --- Profile: nav button text smaller --- */
+  .profile-nav-btn {
+    font-size: 12px !important;
+    padding: 10px 6px !important;
+  }
+
+  /* --- Profile: gender pills wrap tighter --- */
+  .profile-gender-row {
+    gap: 6px !important;
+  }
+  .profile-gender-pill {
+    padding: 7px 12px !important;
+    font-size: 12px !important;
   }
 }
 

@@ -131,15 +131,15 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="container" style={{ paddingTop: 24, paddingBottom: 48, maxWidth: 900 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>My Account</h1>
+    <div className="container profile-page-wrap" style={{ paddingTop: 24, paddingBottom: 48, maxWidth: 900 }}>
+      <h1 className="profile-page-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>My Account</h1>
 
       <div className="resp-grid-profile" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 24 }}>
 
-        {/* Sidebar */}
-        <div className="card" style={{ height: 'fit-content', position: 'sticky', top: 90 }}>
-          {/* Avatar */}
-          <div style={{ padding: '24px 20px', textAlign: 'center', borderBottom: '1px solid var(--gray-100)' }}>
+        {/* Sidebar — desktop: vertical card | mobile: horizontal tab strip */}
+        <div className="profile-sidebar card" style={{ height: 'fit-content', position: 'sticky', top: 90 }}>
+          {/* Avatar — hidden on mobile via CSS */}
+          <div className="profile-avatar-section" style={{ padding: '24px 20px', textAlign: 'center', borderBottom: '1px solid var(--gray-100)' }}>
             <div style={{
               width: 72, height: 72, borderRadius: '50%',
               background: 'linear-gradient(135deg, var(--primary), var(--primary-dark, #0d3347))',
@@ -153,7 +153,8 @@ export default function ProfilePage() {
             <div style={{ fontWeight: 700, fontSize: 15 }}>{user?.name}</div>
             <div style={{ fontSize: 12, color: 'var(--gray-400)', marginTop: 2 }}>{user?.email}</div>
           </div>
-          <div style={{ padding: '8px 0' }}>
+          {/* Nav items */}
+          <div className="profile-nav-list" style={{ padding: '8px 0' }}>
             {[
               { key: 'profile', label: 'Profile', icon: <IconUser size={16} /> },
               { key: 'addresses', label: 'Addresses', icon: <IconMapPin size={16} /> },
@@ -161,6 +162,7 @@ export default function ProfilePage() {
               <button
                 key={item.key}
                 onClick={() => setActiveTab(item.key)}
+                className={`profile-nav-btn${activeTab === item.key ? ' active' : ''}`}
                 style={{
                   width: '100%', display: 'flex', alignItems: 'center', gap: 10,
                   padding: '12px 20px', background: activeTab === item.key ? 'var(--primary-50)' : 'none',
@@ -225,7 +227,7 @@ export default function ProfilePage() {
                 }}
               >
                 {/* ── SLIDE 1: Personal Information ── */}
-                <div style={{
+                <div className="profile-slide-panel" style={{
                   minWidth: '100%',
                   scrollSnapAlign: 'start',
                   padding: '28px 24px',
@@ -266,9 +268,9 @@ export default function ProfilePage() {
 
                     <div className="form-group">
                       <label className="form-label">Gender</label>
-                      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                      <div className="profile-gender-row" style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                         {['male', 'female', 'other'].map((g) => (
-                          <label key={g} style={{
+                          <label key={g} className="profile-gender-pill" style={{
                             display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px',
                             border: `1.5px solid ${form.gender === g ? 'var(--primary)' : 'var(--gray-200)'}`,
                             borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500,
@@ -301,7 +303,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* ── SLIDE 2: Change Password ── */}
-                <div style={{
+                <div className="profile-slide-panel" style={{
                   minWidth: '100%',
                   scrollSnapAlign: 'start',
                   padding: '28px 24px',
@@ -403,7 +405,7 @@ export default function ProfilePage() {
           {/* ── Addresses Tab ── */}
           {activeTab === 'addresses' && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div className="profile-addr-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
                 <h2 style={{ fontSize: 18, fontWeight: 700 }}>Saved Addresses</h2>
                 <button className="btn btn-primary btn-sm" onClick={() => setShowAddressForm(!showAddressForm)}>
                   {showAddressForm ? 'Cancel' : '+ Add Address'}
