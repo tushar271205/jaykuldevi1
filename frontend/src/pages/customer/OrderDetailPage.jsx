@@ -196,13 +196,13 @@ export default function OrderDetailPage() {
         <span>{order.orderNumber}</span>
       </div>
 
-      {order.paymentStatus === 'refund_pending' && (
+      {order.paymentStatus === 'refund_pending' && order.status === 'cancelled' && (
         <div style={{ background: '#fffbe6', border: '1px solid #ffe58f', padding: '12px 16px', borderRadius: 8, marginBottom: 20, color: '#d48806', fontSize: 14 }}>
           <IconWarning size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> <strong>Refund Pending:</strong> Your order has been cancelled and your refund request is pending admin approval. The amount will be credited back to your original payment method in 2-3 business days after approval.
         </div>
       )}
       
-      {order.paymentStatus === 'refunded' && (
+      {order.paymentStatus === 'refunded' && order.status === 'cancelled' && (
         <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '12px 16px', borderRadius: 8, marginBottom: 20, color: '#166534', fontSize: 14 }}>
           <IconCheck size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> <strong>Refund Processed:</strong> Your refund has been initiated by the admin. The amount will be credited back to your original payment method in 2-3 business days.
         </div>
