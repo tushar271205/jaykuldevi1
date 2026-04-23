@@ -195,9 +195,11 @@ export default function AdminOrders() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-start' }}>
-                      <button className="btn btn-primary btn-sm" style={{ fontSize: 11 }} onClick={() => setUpdateOrder(order)}>
-                        Update Status
-                      </button>
+                      {order.status !== 'cancelled' && (
+                        <button className="btn btn-primary btn-sm" style={{ fontSize: 11 }} onClick={() => setUpdateOrder(order)}>
+                          Update Status
+                        </button>
+                      )}
                       {order.paymentStatus === 'refund_pending' && (
                         <button 
                           className={`btn btn-outline btn-sm${refunding === order._id ? ' btn-loading' : ''}`} 

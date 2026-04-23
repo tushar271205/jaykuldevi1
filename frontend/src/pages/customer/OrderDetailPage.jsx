@@ -201,6 +201,12 @@ export default function OrderDetailPage() {
           <IconWarning size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> <strong>Refund Pending:</strong> Your order has been cancelled and your refund request is pending admin approval. The amount will be credited back to your original payment method in 2-3 business days after approval.
         </div>
       )}
+      
+      {order.paymentStatus === 'refunded' && (
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '12px 16px', borderRadius: 8, marginBottom: 20, color: '#166534', fontSize: 14 }}>
+          <IconCheck size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> <strong>Refund Processed:</strong> Your refund has been initiated by the admin. The amount will be credited back to your original payment method in 2-3 business days.
+        </div>
+      )}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>

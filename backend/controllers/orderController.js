@@ -267,8 +267,8 @@ exports.cancelOrder = async (req, res, next) => {
       sendEmail({ to: process.env.EMAIL_FROM, subject, html }).catch(err => console.error('[Email] Failed to notify admin of refund:', err.message)); // To Admin
 
       // Notify User
-      const userSubjectAndHtml = getStatusEmailContent('cancelled', order, order.user);
-      sendEmail({ to: order.user.email, subject: userSubjectAndHtml.subject, html: userSubjectAndHtml.html }).catch(err => console.error('[Email] Failed to notify user of cancellation:', err.message));
+      const { subject: usrSub, html: usrHtml } = emailTemplates.refundInitiated(order, order.user);
+      sendEmail({ to: order.user.email, subject: usrSub, html: usrHtml }).catch(err => console.error('[Email] Failed to notify user of cancellation:', err.message));
     } else {
       order.statusHistory.push({ status: 'cancelled', message: 'Order cancelled successfully.' });
       const { subject, html } = getStatusEmailContent('cancelled', order, order.user);
