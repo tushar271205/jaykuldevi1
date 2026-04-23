@@ -90,7 +90,7 @@ exports.getUsers = async (req, res, next) => {
     // Attach order count for stats
     const users = await Promise.all(
       usersData.map(async (user) => {
-        const orderCount = await Order.countDocuments({ user: user._id });
+        const orderCount = await Order.countDocuments({ user: user._id, paymentStatus: 'paid' });
         return { ...user, orderCount };
       })
     );
