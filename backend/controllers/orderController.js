@@ -377,7 +377,15 @@ exports.getAllOrders = async (req, res, next) => {
     if (status) filter.status = status;
     if (search) {
       const escapeRegex = (str) => str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      filter.$or = [{ orderNumber: { $regex: escapeRegex(search), $options: 'i' } }];
+      const searchRegex = { $regex: escapeRegex(search), $options: 'i' };
+      
+      const matchingUsers = await User.find({ email: searchRegex }).select('_id');
+      const userIds = matchingUsers.map(u => u._id);
+      
+      filter.$or = [
+        { orderNumber: searchRegex },
+        { user: { $in: userIds } }
+      ];
     }
     const skip = (Number(page) - 1) * Number(limit);
 

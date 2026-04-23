@@ -115,12 +115,12 @@ export default function AdminOrders() {
 
       {/* Filters */}
       <div className="admin-header-flex" style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-        <form className="search-form" style={{ backgroundColor: 'white', height: 40, flex: 1, minWidth: '100%', maxWidth: 'none' }} onSubmit={(e) => { e.preventDefault(); setPage(1); fetchOrders(); }}>
+        <form className="search-form" style={{ backgroundColor: 'white', height: 40, flex: 2, minWidth: 250, maxWidth: 'none' }} onSubmit={(e) => { e.preventDefault(); setPage(1); fetchOrders(); }}>
           <IconSearch size={18} color="var(--gray-400)" />
-          <input className="search-input" placeholder="Search order #" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input className="search-input" placeholder="Search by order # or email..." value={search} onChange={(e) => setSearch(e.target.value)} />
           {search && <button type="button" className="search-clear" onClick={() => { setSearch(''); }}>✕</button>}
         </form>
-        <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+        <div style={{ display: 'flex', gap: 12, flex: 1, minWidth: 200 }}>
           <select className="form-select" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} style={{ flex: 1, height: 40 }}>
             <option value="">All Status</option>
             {STATUS_LIST.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
