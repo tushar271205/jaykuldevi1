@@ -82,10 +82,19 @@ exports.getUsers = async (req, res, next) => {
       filter.$or = [{ name: searchRegex }, { email: searchRegex }];
     }
     const skip = (Number(page) - 1) * Number(limit);
-    const [users, total] = await Promise.all([
-      User.find(filter).select('-password -refreshToken').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+    const [usersData, total] = await Promise.all([
+      User.find(filter).select('-password -refreshToken').sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).lean(),
       User.countDocuments(filter),
     ]);
+
+    // Attach order count for stats
+    const users = await Promise.all(
+      usersData.map(async (user) => {
+        const orderCount = await Order.countDocuments({ user: user._id });
+        return { ...user, orderCount };
+      })
+    );
+
     res.json({ success: true, users, pagination: { total, page: Number(page), pages: Math.ceil(total / Number(limit)) } });
   } catch (error) { next(error); }
 };
