@@ -252,20 +252,20 @@ const emailTemplates = {
   }),
 
   refundProcessed: (order, user) => ({
-    subject: `💸 Refund Processed - Order #${order.orderNumber}`,
+    subject: `💸 Refund Initiated - Order #${order.orderNumber}`,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border-radius:16px;overflow:hidden">
         <div style="background:linear-gradient(135deg,#1b4965,#62b6cb);padding:40px;text-align:center">
           <h1 style="color:#fff;margin:0;font-size:28px">👕 Jay Kuldevi</h1>
-          <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:18px">💸 Refund Processed</p>
+          <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:18px">💸 Refund Initiated</p>
         </div>
         <div style="padding:40px">
           <h2 style="color:#333">Hi ${user.name},</h2>
-          <p style="color:#555;font-size:16px">Your refund for the cancelled order <strong>#${order.orderNumber}</strong> has been successfully processed by our team.</p>
+          <p style="color:#555;font-size:16px">Your refund for the cancelled order <strong>#${order.orderNumber}</strong> has been initiated by our team.</p>
           <div style="background:#f8f8f8;border-radius:12px;padding:20px;margin:20px 0">
             <p style="margin:0 0 8px"><strong>Refund Amount:</strong> ₹${order.finalAmount}</p>
           </div>
-          <p style="color:#555;font-size:16px">The amount will be credited back to your original payment method in <strong>2-3 business days</strong> depending on your bank.</p>
+          <p style="color:#555;font-size:16px">The amount should reflect in your original payment method within <strong>2-3 business days</strong> depending on your bank.</p>
         </div>
       </div>
     `,
