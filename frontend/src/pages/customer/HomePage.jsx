@@ -42,9 +42,9 @@ const SkeletonCard = () => (
 );
 
 const OFFERS = [
-  { code: 'KIDDO10', label: '10% OFF', sub: 'On Your 1st Order', color: 'var(--primary)', bg: 'var(--primary-50)', icon: <IconGift size={28} /> },
+  { label: '10% OFF', sub: 'On Your 1st Order', color: 'var(--primary)', bg: 'var(--primary-50)', icon: <IconGift size={28} /> },
   { code: 'SAVE300', label: '₹300 OFF', sub: 'On purchase of ₹2000+', color: 'var(--secondary)', bg: '#ffe4ef', icon: <IconCreditCard size={28} /> },
-  { code: 'FREESHIP', label: 'FREE Shipping', sub: 'On orders above ₹499', color: '#10b981', bg: '#d1fae5', icon: <IconTruck size={28} /> },
+  { label: 'FREE Shipping', sub: 'On orders above ₹499', color: '#10b981', bg: '#d1fae5', icon: <IconTruck size={28} /> },
   { code: 'PT15EXTRA', label: '15% OFF', sub: 'On purchase of ₹3999+', color: '#f59e0b', bg: '#fef3c7', icon: <IconZap size={28} /> },
 ];
 
@@ -278,22 +278,33 @@ export default function HomePage() {
                     {offer.label}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--gray-600)', marginBottom: 6 }}>{offer.sub}</div>
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                    border: `1px solid ${offer.color}`, borderRadius: 4,
-                    padding: '4px 10px', fontSize: 11, fontWeight: 700, color: offer.color,
-                    cursor: 'copy',
-                  }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigator.clipboard.writeText(offer.code);
-                      toast.success(`${offer.code} copied!`);
+                  {offer.code ? (
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      border: `1px solid ${offer.color}`, borderRadius: 4,
+                      padding: '4px 10px', fontSize: 11, fontWeight: 700, color: offer.color,
+                      cursor: 'copy',
                     }}
-                    title="Copy Code"
-                  >
-                    <span>CODE:</span> <span>{offer.code}</span>
-                    <span style={{ fontSize: 13, background: offer.color, color: 'white', padding: '2px 6px', borderRadius: 4, marginLeft: 4, opacity: 0.9 }}>Copy</span>
-                  </div>
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(offer.code);
+                        toast.success(`${offer.code} copied!`);
+                      }}
+                      title="Copy Code"
+                    >
+                      <span>CODE:</span> <span>{offer.code}</span>
+                      <span style={{ fontSize: 13, background: offer.color, color: 'white', padding: '2px 6px', borderRadius: 4, marginLeft: 4, opacity: 0.9 }}>Copy</span>
+                    </div>
+                  ) : (
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      border: `1px solid ${offer.color}`, borderRadius: 4,
+                      padding: '4px 10px', fontSize: 11, fontWeight: 700, color: offer.color,
+                      background: 'rgba(255,255,255,0.5)'
+                    }}>
+                      Applies Automatically
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -525,7 +536,7 @@ export default function HomePage() {
             >
               <div style={{ marginBottom: 16 }}><IconParty size={40} /></div>
               <h2 style={{ color: 'white', fontSize: 24, marginBottom: 8 }}>First Order? Get 10% OFF!</h2>
-              <p style={{ opacity: 0.9, fontSize: 14, marginBottom: 24 }}>Use code <strong>KIDDO10</strong> at checkout.</p>
+              <p style={{ opacity: 0.9, fontSize: 14, marginBottom: 24 }}>Discount applied automatically at checkout.</p>
               <Link to="/register" className="btn" style={{ background: 'white', color: 'var(--primary)', fontWeight: 700, padding: '10px 24px', borderRadius: 'var(--radius-full)' }}>
                 Register & Shop Now →
               </Link>

@@ -306,11 +306,12 @@ export default function ProductDetailPage() {
             }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 8 }}>OFFERS</div>
               {[
-                [<IconTag size={14} key="tag" />, 'KIDDO10', 'Extra 10% Off on your 1st order above ₹1599'],
+                [<IconTag size={14} key="tag" />, 'AUTO-APPLY', 'Extra 10% Off on your 1st order'],
                 [<IconCreditCard size={14} key="cc" />, 'SAVE300', 'Extra ₹300 Off on purchase of Rs 2000'],
+                [<IconTruck size={14} key="truck" />, 'AUTO-APPLY', 'Free Shipping on orders above ₹499'],
                 [<IconZap size={14} key="zap" />, 'PT15EXTRA', 'Extra 15% Off on purchase of Rs 3999'],
               ].map(([icon, code, text]) => (
-                <div key={code} style={{ display: 'flex', gap: 8, fontSize: 12, color: 'var(--gray-700)', marginBottom: 6, alignItems: 'flex-start' }}>
+                <div key={code + text} style={{ display: 'flex', gap: 8, fontSize: 12, color: 'var(--gray-700)', marginBottom: 6, alignItems: 'flex-start' }}>
                   <span>{icon}</span>
                   <span><strong>{code}</strong> — {text}</span>
                 </div>
