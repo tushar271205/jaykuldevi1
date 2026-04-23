@@ -114,7 +114,7 @@ export default function PrivacyPolicyPage() {
                 <div style={{ color: 'var(--primary)' }}><IconMail size={24} /></div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Email Us</div>
-                  <div style={{ fontSize: 14, color: 'var(--gray-600)' }}>tmakwana585@gmail.com</div>
+                  <div style={{ fontSize: 14, color: 'var(--gray-600)' }}>jaikuldevi123@gmail.com</div>
                 </div>
               </div>
             </div>

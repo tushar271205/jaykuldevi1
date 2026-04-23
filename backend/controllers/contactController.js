@@ -19,7 +19,7 @@ const sendContactMessage = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Message must be at least 10 characters.' });
     }
 
-    const adminEmail = process.env.EMAIL_USER || 'tmakwana585@gmail.com';
+    const adminEmail = process.env.EMAIL_USER || 'jaikuldevi123@gmail.com';
     const submittedAt = new Date().toLocaleString('en-IN', {
       timeZone: 'Asia/Kolkata',
       dateStyle: 'full',

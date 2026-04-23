@@ -582,7 +582,7 @@ export default function HomePage() {
                   <IconMail size={18} color="white" />
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase' }}>E-mail Address</div>
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>tmakwana585@gmail.com</div>
+                    <div style={{ fontSize: 14, fontWeight: 700 }}>jaikuldevi123@gmail.com</div>
                   </div>
                 </div>
 

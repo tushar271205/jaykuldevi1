@@ -19,7 +19,7 @@ const sendEmail = async ({ to, subject, html, attachments }) => {
     })) : undefined;
 
     // The sender email MUST be the one verified on your Brevo account.
-    const senderEmail = process.env.EMAIL_USER || 'tmakwana585@gmail.com';
+    const senderEmail = process.env.EMAIL_USER || 'jaikuldevi123@gmail.com';
 
     let cleanToEmail = to;
     let cleanToName = undefined;
