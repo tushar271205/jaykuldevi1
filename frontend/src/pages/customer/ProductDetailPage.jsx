@@ -93,13 +93,21 @@ export default function ProductDetailPage() {
     ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
     : 0;
 
+  const totalStock = product.sizes?.reduce((sum, s) => sum + s.stock, 0) || 0;
+  const selectedSizeObj = product.sizes?.find((s) => s.size === selectedSize);
+  const maxQty = selectedSizeObj ? Math.min(10, selectedSizeObj.stock) : 10;
+
   const handleAddToCart = () => {
     if (!selectedSize) {
       document.getElementById('size-section')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
+    if (!selectedSizeObj || selectedSizeObj.stock === 0) {
+      toast.error('This size is out of stock.');
+      return;
+    }
     setAddingToCart(true);
-    addToCart(product, selectedSize, selectedColor, quantity);
+    addToCart(product, selectedSize, selectedColor, Math.min(quantity, selectedSizeObj.stock));
     setTimeout(() => setAddingToCart(false), 800);
   };
 
@@ -371,7 +379,12 @@ export default function ProductDetailPage() {
                   <button
                     key={s.size}
                     className={`size-chip${s.stock === 0 ? ' disabled' : ''}${selectedSize === s.size ? ' selected' : ''}`}
-                    onClick={() => s.stock > 0 && setSelectedSize(s.size)}
+                    onClick={() => {
+                      if (s.stock > 0) {
+                        setSelectedSize(s.size);
+                        if (quantity > s.stock) setQuantity(s.stock);
+                      }
+                    }}
                   >
                     {s.size}
                   </button>
@@ -392,9 +405,12 @@ export default function ProductDetailPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div className="qty-stepper">
                   <button onClick={() => setQuantity((q) => Math.max(1, q - 1))} disabled={quantity <= 1}>−</button>
-                  <span>{quantity}</span>
-                  <button onClick={() => setQuantity((q) => Math.min(10, q + 1))} disabled={quantity >= 10}>+</button>
+                  <span>{Math.min(quantity, maxQty > 0 ? maxQty : 1)}</span>
+                  <button onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))} disabled={quantity >= maxQty || maxQty === 0}>+</button>
                 </div>
+                {selectedSizeObj && selectedSizeObj.stock > 0 && selectedSizeObj.stock < 5 && (
+                  <div style={{ fontSize: 12, color: 'var(--error)', fontWeight: 600 }}>Only {selectedSizeObj.stock} left!</div>
+                )}
               </div>
             </div>
 
@@ -411,9 +427,9 @@ export default function ProductDetailPage() {
                 className={`btn btn-primary btn-lg${addingToCart ? ' btn-loading' : ''}`}
                 style={{ flex: 2 }}
                 onClick={handleAddToCart}
-                disabled={addingToCart}
+                disabled={addingToCart || totalStock === 0}
               >
-                {addingToCart ? 'ADDING...' : <><IconShoppingBag size={16} style={{ display: 'inline', verticalAlign: 'middle' }} /> ADD TO BAG</>}
+                {totalStock === 0 ? 'OUT OF STOCK' : addingToCart ? 'ADDING...' : <><IconShoppingBag size={16} style={{ display: 'inline', verticalAlign: 'middle' }} /> ADD TO BAG</>}
               </button>
             </div>
 

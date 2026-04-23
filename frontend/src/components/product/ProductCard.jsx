@@ -177,7 +177,7 @@ export default function ProductCard({ product, isWishlist }) {
               )}
             </div>
 
-            {inStockSizes.length === 0 && !isWishlist && (
+            {inStockSizes.length === 0 && (
               <div style={{ fontSize: 11, color: 'var(--error)', fontWeight: 600, marginTop: 4 }}>
                 Out of Stock
               </div>
@@ -187,7 +187,7 @@ export default function ProductCard({ product, isWishlist }) {
       </Link>
 
       {/* Add to Bag button */}
-      {(inStockSizes.length > 0 || isWishlist) && (
+      {inStockSizes.length > 0 && (
         <button
           className="btn btn-outline btn-sm"
           style={{
