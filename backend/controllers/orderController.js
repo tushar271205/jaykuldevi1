@@ -199,7 +199,7 @@ const _postOrderConfirmation = async (order) => {
   const populatedOrder = await Order.findById(order._id).populate('user', 'name email');
   if (populatedOrder && populatedOrder.user) {
     const { subject, html } = emailTemplates.orderConfirmed(populatedOrder, populatedOrder.user);
-    sendEmail({ to: populatedOrder.user.email, subject, html });
+    sendEmail({ to: populatedOrder.user.email, subject, html }).catch(err => console.error('[Email] Failed to send order confirmation:', err.message));
   }
 };
 
@@ -264,15 +264,15 @@ exports.cancelOrder = async (req, res, next) => {
 
       // Notify Admin
       const { subject, html } = emailTemplates.adminRefundRequest(order, order.user);
-      sendEmail({ to: process.env.EMAIL_FROM, subject, html }); // To Admin
+      sendEmail({ to: process.env.EMAIL_FROM, subject, html }).catch(err => console.error('[Email] Failed to notify admin of refund:', err.message)); // To Admin
 
       // Notify User
       const userSubjectAndHtml = getStatusEmailContent('cancelled', order, order.user);
-      sendEmail({ to: order.user.email, subject: userSubjectAndHtml.subject, html: userSubjectAndHtml.html });
+      sendEmail({ to: order.user.email, subject: userSubjectAndHtml.subject, html: userSubjectAndHtml.html }).catch(err => console.error('[Email] Failed to notify user of cancellation:', err.message));
     } else {
       order.statusHistory.push({ status: 'cancelled', message: 'Order cancelled successfully.' });
       const { subject, html } = getStatusEmailContent('cancelled', order, order.user);
-      sendEmail({ to: order.user.email, subject, html });
+      sendEmail({ to: order.user.email, subject, html }).catch(err => console.error('[Email] Failed to notify user of cancellation:', err.message));
     }
 
     await order.save();
@@ -311,7 +311,7 @@ exports.requestReplacement = async (req, res, next) => {
 
     // Notify Admin about replacement request
     const { subject, html } = emailTemplates.adminReplacementRequest(order, req.user);
-    sendEmail({ to: process.env.EMAIL_FROM, subject, html });
+    sendEmail({ to: process.env.EMAIL_FROM, subject, html }).catch(err => console.error('[Email] Failed to notify admin of replacement:', err.message));
 
     res.json({ success: true, message: 'Replacement requested successfully.', order });
   } catch (error) {
@@ -343,7 +343,7 @@ exports.approveRefund = async (req, res, next) => {
     // Notify User
     if (order.user) {
       const { subject, html } = emailTemplates.refundProcessed(order, order.user);
-      sendEmail({ to: order.user.email, subject, html });
+      sendEmail({ to: order.user.email, subject, html }).catch(err => console.error('[Email] Failed to notify user of refund:', err.message));
     }
 
     res.json({ success: true, message: 'Refund approved and processed.', order });
@@ -423,10 +423,10 @@ exports.updateOrderStatus = async (req, res, next) => {
             content: pdfBuffer,
             contentType: 'application/pdf'
           }]
-        });
+        }).catch(err => console.error('[Email] Failed to send replacement bill:', err.message));
       } else {
         const { subject, html } = getStatusEmailContent(status, order, order.user);
-        sendEmail({ to: order.user.email, subject, html });
+        sendEmail({ to: order.user.email, subject, html }).catch(err => console.error('[Email] Failed to send status update:', err.message));
       }
     }
 

@@ -121,7 +121,7 @@ exports.register = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     const { subject, html } = emailTemplates.welcome(name);
-    sendEmail({ to: decoded.email, subject, html });
+    sendEmail({ to: decoded.email, subject, html }).catch(err => console.error('[Email] Failed to send welcome email:', err.message));
 
     res.status(201).json({
       success: true,

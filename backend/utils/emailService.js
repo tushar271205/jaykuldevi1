@@ -21,13 +21,25 @@ const sendEmail = async ({ to, subject, html, attachments }) => {
     // The sender email MUST be the one verified on your Brevo account.
     const senderEmail = process.env.EMAIL_USER || 'tmakwana585@gmail.com';
 
+    let cleanToEmail = to;
+    let cleanToName = undefined;
+
+    // Parse "Name <email@example.com>" format
+    if (typeof to === 'string' && to.includes('<') && to.includes('>')) {
+      const match = to.match(/(.*)<(.*)>/);
+      if (match) {
+        cleanToName = match[1].trim();
+        cleanToEmail = match[2].trim();
+      }
+    }
+
     const payload = {
       sender: {
         name: 'Jay Kuldevi',
         email: senderEmail
       },
       to: [
-        { email: to }
+        { email: cleanToEmail, ...(cleanToName && { name: cleanToName }) }
       ],
       subject: subject,
       htmlContent: html,

@@ -548,11 +548,11 @@ export default function ProductDetailPage() {
               )}
 
               {/* Review Pagination */}
-              <Pagination 
-                page={reviewPage} 
-                pages={reviewPagination.pages} 
-                onPageChange={handleReviewPageChange} 
-                style={{ paddingTop: '24px', justifyContent: 'center' }} 
+              <Pagination
+                page={reviewPage}
+                pages={reviewPagination.pages}
+                onPageChange={handleReviewPageChange}
+                style={{ paddingTop: '24px', justifyContent: 'center' }}
               />
             </div>
           )}
@@ -637,24 +637,24 @@ export default function ProductDetailPage() {
                 </thead>
                 <tbody>
                   {[
-                    { label: '0–3 M',   age: '0–3 months',  h: '44–56',   w: '2–5.5',   chest: 40, waist: 40 },
-                    { label: '3–6 M',   age: '3–6 months',  h: '56–63',   w: '5.5–7',   chest: 44, waist: 44 },
-                    { label: '6–9 M',   age: '6–9 months',  h: '63–68',   w: '7–8.5',   chest: 46, waist: 46 },
-                    { label: '9–12 M',  age: '9–12 months', h: '68–74',   w: '8.5–10',  chest: 48, waist: 47 },
-                    { label: '12–18 M', age: '12–18 months',h: '74–81',   w: '10–11.5', chest: 50, waist: 49 },
-                    { label: '18–24 M', age: '18–24 months',h: '81–88',   w: '11.5–13', chest: 52, waist: 51 },
-                    { label: '2–3 Y',   age: '2–3 years',   h: '88–98',   w: '13–15',   chest: 54, waist: 53 },
-                    { label: '3–4 Y',   age: '3–4 years',   h: '98–104',  w: '15–17',   chest: 56, waist: 54 },
-                    { label: '4–5 Y',   age: '4–5 years',   h: '104–111', w: '17–19',   chest: 58, waist: 55 },
-                    { label: '5–6 Y',   age: '5–6 years',   h: '111–117', w: '19–22',   chest: 60, waist: 56 },
-                    { label: '6–7 Y',   age: '6–7 years',   h: '117–122', w: '22–25',   chest: 63, waist: 57 },
-                    { label: '7–8 Y',   age: '7–8 years',   h: '122–128', w: '25–28',   chest: 66, waist: 59 },
-                    { label: '8–9 Y',   age: '8–9 years',   h: '128–134', w: '28–31',   chest: 69, waist: 61 },
-                    { label: '9–10 Y',  age: '9–10 years',  h: '134–140', w: '31–35',   chest: 72, waist: 63 },
-                    { label: '10–11 Y', age: '10–11 years', h: '140–145', w: '35–39',   chest: 75, waist: 65 },
-                    { label: '11–12 Y', age: '11–12 years', h: '145–151', w: '39–43',   chest: 78, waist: 67 },
-                    { label: '12–13 Y', age: '12–13 years', h: '151–157', w: '43–48',   chest: 81, waist: 69 },
-                    { label: '13–14 Y', age: '13–14 years', h: '157–163', w: '48–54',   chest: 84, waist: 71 },
+                    { label: '0–3 M', age: '0–3 months', h: '44–56', w: '2–5.5', chest: 40, waist: 40 },
+                    { label: '3–6 M', age: '3–6 months', h: '56–63', w: '5.5–7', chest: 44, waist: 44 },
+                    { label: '6–9 M', age: '6–9 months', h: '63–68', w: '7–8.5', chest: 46, waist: 46 },
+                    { label: '9–12 M', age: '9–12 months', h: '68–74', w: '8.5–10', chest: 48, waist: 47 },
+                    { label: '12–18 M', age: '12–18 months', h: '74–81', w: '10–11.5', chest: 50, waist: 49 },
+                    { label: '18–24 M', age: '18–24 months', h: '81–88', w: '11.5–13', chest: 52, waist: 51 },
+                    { label: '2–3 Y', age: '2–3 years', h: '88–98', w: '13–15', chest: 54, waist: 53 },
+                    { label: '3–4 Y', age: '3–4 years', h: '98–104', w: '15–17', chest: 56, waist: 54 },
+                    { label: '4–5 Y', age: '4–5 years', h: '104–111', w: '17–19', chest: 58, waist: 55 },
+                    { label: '5–6 Y', age: '5–6 years', h: '111–117', w: '19–22', chest: 60, waist: 56 },
+                    { label: '6–7 Y', age: '6–7 years', h: '117–122', w: '22–25', chest: 63, waist: 57 },
+                    { label: '7–8 Y', age: '7–8 years', h: '122–128', w: '25–28', chest: 66, waist: 59 },
+                    { label: '8–9 Y', age: '8–9 years', h: '128–134', w: '28–31', chest: 69, waist: 61 },
+                    { label: '9–10 Y', age: '9–10 years', h: '134–140', w: '31–35', chest: 72, waist: 63 },
+                    { label: '10–11 Y', age: '10–11 years', h: '140–145', w: '35–39', chest: 75, waist: 65 },
+                    { label: '11–12 Y', age: '11–12 years', h: '145–151', w: '39–43', chest: 78, waist: 67 },
+                    { label: '12–13 Y', age: '12–13 years', h: '151–157', w: '43–48', chest: 81, waist: 69 },
+                    { label: '13–14 Y', age: '13–14 years', h: '157–163', w: '48–54', chest: 84, waist: 71 },
                   ].map((row, i) => {
                     // Highlight rows matching the product's available sizes
                     const productSizeLabels = (product.sizes || []).map((s) => s.size);
